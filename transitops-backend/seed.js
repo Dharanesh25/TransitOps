@@ -19,9 +19,8 @@ try {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        password_hash TEXT,
+        password_hash TEXT NOT NULL,
         role TEXT CHECK(role IN ('Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst')),
-        password TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
     `);
@@ -38,14 +37,14 @@ try {
   // 1. Seed Users (one for each role, password: password123)
   const roles = ['Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst'];
   const userStmt = db.prepare(`
-    INSERT INTO users (name, email, password_hash, role, password)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO users (name, email, password_hash, role)
+    VALUES (?, ?, ?, ?)
   `);
 
   roles.forEach(role => {
     const email = `${role.toLowerCase().replace(/\s+/g, '')}@transitops.com`;
     const passwordHash = bcrypt.hashSync('password123', 10);
-    userStmt.run(role, email, passwordHash, role, passwordHash);
+    userStmt.run(role, email, passwordHash, role);
     console.log(`[TransitOps Seed] Seeded User: ${role} (${email})`);
   });
 

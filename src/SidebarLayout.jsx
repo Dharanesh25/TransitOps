@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 
-<<<<<<< HEAD
-const SidebarLayout = ({ children, activeItem, setActiveItem, theme, setTheme }) => {
-=======
-const SidebarLayout = ({ children, activeItem, setActiveItem, user, onLogout }) => {
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+const SidebarLayout = ({ children, activeItem, setActiveItem, user, onLogout, theme, setTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -198,50 +194,46 @@ const SidebarLayout = ({ children, activeItem, setActiveItem, user, onLogout }) 
           })}
         </nav>
 
-<<<<<<< HEAD
         <div className={`p-4 border-t ${isDark ? 'border-slate-900' : 'border-slate-200/80'}`}>
-          <div className={`flex items-center gap-3 p-2 rounded-xl transition-colors duration-200 group relative cursor-pointer ${
-            isDark ? 'hover:bg-slate-900/40' : 'hover:bg-slate-100/50'
-          }`}>
-            <div className="relative flex-shrink-0">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border shadow-md ${
-                isDark ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-100 border-slate-200 text-slate-700'
-              }`}>
-                JD
-=======
-        <div className="p-4 border-t border-slate-850">
           <div 
             onClick={onLogout}
             title="Click to logout"
-            className="flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all duration-200 group relative cursor-pointer"
+            className={`flex items-center gap-3 p-2 rounded-xl border transition-all duration-200 group relative cursor-pointer ${
+              isDark 
+                ? 'hover:bg-red-500/10 border-transparent hover:border-red-500/20' 
+                : 'hover:bg-red-50/70 border-transparent hover:border-red-200'
+            }`}
           >
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-xl bg-slate-850 flex items-center justify-center text-sm font-semibold border border-slate-700 shadow-md text-indigo-400 group-hover:text-red-400 transition-colors">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border shadow-md transition-colors ${
+                isDark 
+                  ? 'bg-slate-900 border-slate-800 text-indigo-400 group-hover:text-red-400' 
+                  : 'bg-slate-100 border-slate-200 text-indigo-650 group-hover:text-red-650'
+              }`}>
                 {userInitials}
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
               </div>
               <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-transparent animate-pulse" />
             </div>
             <div className={`flex-1 min-w-0 transition-opacity duration-300 ${isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100'}`}>
-<<<<<<< HEAD
-              <p className={`text-sm font-semibold truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>John Doe</p>
-              <p className={`text-xs truncate ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Fleet Manager</p>
+              <p className={`text-sm font-semibold truncate transition-colors ${
+                isDark 
+                  ? 'text-slate-200 group-hover:text-red-400' 
+                  : 'text-slate-800 group-hover:text-red-650'
+              }`}>{userName}</p>
+              <p className={`text-xs truncate transition-colors ${
+                isDark 
+                  ? 'text-slate-500 group-hover:text-red-500/70' 
+                  : 'text-slate-400 group-hover:text-red-550'
+              }`}>{userRole} (Sign Out)</p>
             </div>
             {isCollapsed && (
               <div className={`absolute left-full ml-4 p-3 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50 ${
-                isDark ? 'bg-slate-950 border border-slate-800' : 'bg-white border border-slate-200'
+                isDark 
+                  ? 'bg-slate-950 border border-red-500/20 text-red-400' 
+                  : 'bg-white border border-red-200 text-red-600'
               }`}>
-                <p className={`text-sm font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>John Doe</p>
-                <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Fleet Manager</p>
-=======
-              <p className="text-sm font-semibold text-slate-200 truncate group-hover:text-red-400 transition-colors">{userName}</p>
-              <p className="text-xs text-slate-500 truncate group-hover:text-red-500/70 transition-colors">{userRole} (Sign Out)</p>
-            </div>
-            {isCollapsed && (
-              <div className="absolute left-full ml-4 p-3 bg-slate-950 border border-red-500/20 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50">
-                <p className="text-sm font-semibold text-red-400">{userName}</p>
-                <p className="text-xs text-red-500/70">Click to Logout</p>
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+                <p className="text-sm font-semibold">{userName}</p>
+                <p className="text-xs">Click to Logout</p>
               </div>
             )}
           </div>

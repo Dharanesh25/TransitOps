@@ -6,28 +6,16 @@ const displayStatus = (status) => {
   return 'Idle';
 };
 
-<<<<<<< HEAD
-const AnalyticsTable = ({ theme }) => {
-=======
-const AnalyticsTable = ({ token }) => {
+const AnalyticsTable = ({ token, theme }) => {
   const [vehicles, setVehicles] = useState([]);
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
   const [typeFilter, setTypeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [regionFilter, setRegionFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
 
-<<<<<<< HEAD
   const isDark = theme === 'dark';
 
-  const filteredVehicles = initialVehicles.filter((vehicle) => {
-    const matchesType = typeFilter === 'All' || vehicle.type === typeFilter;
-    const matchesStatus = statusFilter === 'All' || vehicle.status === statusFilter;
-    const matchesRegion = regionFilter === 'All' || vehicle.region === regionFilter;
-    const matchesSearch = vehicle.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesType && matchesStatus && matchesRegion && matchesSearch;
-=======
   const fetchVehicles = async () => {
     if (!token) return;
     setLoading(true);
@@ -64,7 +52,6 @@ const AnalyticsTable = ({ token }) => {
 
   const filteredVehicles = vehicles.filter((vehicle) => {
     return vehicle.name.toLowerCase().includes(searchTerm.toLowerCase());
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
   });
 
   const handleExportCSV = async () => {
@@ -198,15 +185,9 @@ const AnalyticsTable = ({ token }) => {
                   </td>
                   <td className="py-4.5 px-6 text-center">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-<<<<<<< HEAD
-                      vehicle.status === 'Active' ? 'bg-emerald-500/10 text-emerald-500' :
-                      vehicle.status === 'Maintenance' ? 'bg-amber-500/10 text-amber-500' :
+                      displayStatus(vehicle.status) === 'Active' ? 'bg-emerald-500/10 text-emerald-450' :
+                      displayStatus(vehicle.status) === 'Maintenance' ? 'bg-amber-500/10 text-amber-450' :
                       isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
-=======
-                      displayStatus(vehicle.status) === 'Active' ? 'bg-emerald-500/10 text-emerald-400' :
-                      displayStatus(vehicle.status) === 'Maintenance' ? 'bg-amber-500/10 text-amber-400' :
-                      'bg-slate-800 text-slate-400'
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
                     }`}>
                       <span className={`w-1 h-1 rounded-full ${
                         displayStatus(vehicle.status) === 'Active' ? 'bg-emerald-500' :

@@ -6,35 +6,17 @@ import RegistrationForms from './RegistrationForms';
 import TripDispatchForm from './TripDispatchForm';
 import LogsAndExpenses from './LogsAndExpenses';
 
-<<<<<<< HEAD
-const DriversView = ({ theme }) => {
-  const isDark = theme === 'dark';
-  const drivers = [
-    { name: 'Michael Cole', avatar: 'MC', status: 'On Duty', vehicle: 'Volvo FH16', rating: '4.9', trip: 'Boston ➔ New York' },
-    { name: 'Sarah Jenkins', avatar: 'SJ', status: 'On Duty', vehicle: 'Ford E-Transit', rating: '4.8', trip: 'Seattle ➔ Portland' },
-    { name: 'David Smith', avatar: 'DS', status: 'On Break', vehicle: 'Mercedes Sprinter', rating: '4.7', trip: 'Rest Stop (I-95)' },
-    { name: 'Emma Wilson', avatar: 'EW', status: 'Off Duty', vehicle: 'None', rating: '4.95', trip: 'N/A' },
-    { name: 'Carlos Diaz', avatar: 'CD', status: 'On Duty', vehicle: 'Scania R500', rating: '4.6', trip: 'Miami ➔ Orlando' }
-  ];
-=======
 const API_BASE = 'http://localhost:4000/api';
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
 
-const DriversView = ({ drivers = [] }) => {
+const DriversView = ({ drivers = [], theme }) => {
+  const isDark = theme === 'dark';
   return (
-<<<<<<< HEAD
     <div className={`border backdrop-blur-md rounded-2xl overflow-hidden shadow-lg animate-slide-up ${
       isDark ? 'bg-slate-950/45 border-slate-800' : 'bg-white/70 border-slate-200/80'
     }`}>
       <div className={`p-6 border-b ${isDark ? 'border-slate-900' : 'border-slate-200/80'}`}>
         <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Active Drivers Roster</h2>
-        <p className={`text-sm mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Real-time status tracking, active vehicle assignments, and ratings.</p>
-=======
-    <div className="bg-slate-950/45 border border-slate-800 rounded-2xl backdrop-blur-md overflow-hidden">
-      <div className="p-6 border-b border-slate-850">
-        <h2 className="text-xl font-semibold text-white">Active Drivers Roster</h2>
-        <p className="text-sm text-slate-500 mt-0.5">Real-time status tracking, license category, and CDL expiry details.</p>
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+        <p className={`text-sm mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Real-time status tracking, license category, and CDL expiry details.</p>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
@@ -49,7 +31,6 @@ const DriversView = ({ drivers = [] }) => {
               <th className="py-4 px-6">Contact</th>
             </tr>
           </thead>
-<<<<<<< HEAD
           <tbody className={`divide-y text-sm ${
             isDark ? 'divide-slate-900/60 text-slate-300' : 'divide-slate-200/60 text-slate-600'
           }`}>
@@ -58,182 +39,50 @@ const DriversView = ({ drivers = [] }) => {
                 <td className="py-4.5 px-6 font-medium">
                   <div className="flex items-center gap-3">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm border ${
-                      isDark ? 'bg-slate-900 border-slate-800 text-indigo-400' : 'bg-slate-100 border-slate-200 text-indigo-600'
+                      isDark ? 'bg-slate-900 border-slate-800 text-indigo-400' : 'bg-slate-100 border-slate-200 text-indigo-650'
                     }`}>
-                      {driver.avatar}
+                      {driver.avatar || (driver.name ? driver.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'DR')}
                     </div>
                     <div>
                       <p className={`font-semibold ${isDark ? 'text-white' : 'text-slate-850'}`}>{driver.name}</p>
-                      <p className={`text-xs font-normal mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>ID: DRV-00{index + 104}</p>
+                      <p className={`text-xs font-normal mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>ID: DRV-00{driver.id}</p>
                     </div>
                   </div>
                 </td>
                 <td className="py-4.5 px-6 text-center">
                   <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                    driver.status === 'On Duty' ? 'bg-emerald-500/10 text-emerald-500' :
-                    driver.status === 'On Break' ? 'bg-amber-500/10 text-amber-500' :
+                    driver.status === 'Available' ? 'bg-emerald-500/10 text-emerald-500' :
+                    driver.status === 'On Trip' ? 'bg-blue-500/10 text-blue-500' :
+                    driver.status === 'Suspended' ? 'bg-rose-500/10 text-rose-500' :
                     isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${
-                      driver.status === 'On Duty' ? 'bg-emerald-500' :
-                      driver.status === 'On Break' ? 'bg-amber-500' :
+                      driver.status === 'Available' ? 'bg-emerald-500' :
+                      driver.status === 'On Trip' ? 'bg-blue-500' :
+                      driver.status === 'Suspended' ? 'bg-rose-500' :
                       'bg-slate-400'
                     }`} />
                     {driver.status}
                   </span>
                 </td>
-                <td className={isDark ? 'text-slate-200 font-semibold' : 'text-slate-700 font-semibold'}>
-                  {driver.vehicle}
-                </td>
-                <td className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  {driver.trip}
+                <td className="py-4.5 px-6">
+                  <p className={`font-semibold text-xs ${isDark ? 'text-indigo-300' : 'text-indigo-600'}`}>{driver.license_category}</p>
+                  <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Num: {driver.license_number}</p>
+                  <p className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Expires: {driver.license_expiry}</p>
                 </td>
                 <td className="py-4.5 px-6 text-center">
                   <div className="flex items-center justify-center gap-1">
                     <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
-                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>{driver.rating}</span>
+                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>{driver.safety_score}</span>
                   </div>
+                </td>
+                <td className={`py-4.5 px-6 font-mono text-xs ${isDark ? 'text-slate-450' : 'text-slate-500'}`}>
+                  {driver.contact_number}
                 </td>
               </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-const TripsView = ({ theme }) => {
-  const isDark = theme === 'dark';
-  const trips = [
-    { id: 'TRIP-9082', route: 'Chicago to Detroit', progress: 75, driver: 'Michael Cole', vehicle: 'Volvo FH16', status: 'In Transit', eta: '45 mins' },
-    { id: 'TRIP-9083', route: 'Los Angeles to Phoenix', progress: 10, driver: 'Carlos Diaz', vehicle: 'Scania R500', status: 'In Transit', eta: '4 hrs 12 mins' },
-    { id: 'TRIP-9084', route: 'Atlanta to Savannah', progress: 0, driver: 'Sarah Jenkins', vehicle: 'Ford E-Transit', status: 'Scheduled', eta: 'Departs 11:30 AM' },
-    { id: 'TRIP-9085', route: 'Dallas to Houston', progress: 100, driver: 'Emma Wilson', vehicle: 'Rivian EDV', status: 'Completed', eta: 'Arrived' }
-  ];
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Trips & Route Dispatches</h2>
-        <p className={`text-sm mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Live monitoring of logistics routes and delivery completions.</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {trips.map((trip, index) => (
-          <div key={trip.id} className={`border rounded-2xl p-6 space-y-4 backdrop-blur-md shadow-lg animate-slide-up ${
-            index === 0 ? '' : index === 1 ? 'delay-75' : index === 2 ? 'delay-150' : 'delay-225'
-          } ${
-            isDark ? 'bg-slate-950/45 border-slate-800' : 'bg-white/70 border-slate-200/80'
-          }`}>
-            <div className="flex items-start justify-between">
-              <div>
-                <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-md border ${
-                  isDark ? 'bg-slate-900 border-slate-800 text-slate-400' : 'bg-slate-100 border-slate-200/80 text-slate-500'
-                }`}>
-                  {trip.id}
-                </span>
-                <h3 className={`text-lg font-bold mt-2 ${isDark ? 'text-white' : 'text-slate-850'}`}>{trip.route}</h3>
-              </div>
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                trip.status === 'In Transit' ? 'bg-blue-500/10 text-blue-500' :
-                trip.status === 'Scheduled' ? 'bg-purple-500/10 text-purple-500' :
-                'bg-emerald-500/10 text-emerald-500'
-              }`}>
-                {trip.status}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 py-2 text-xs">
-              <div>
-                <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>Driver</p>
-                <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{trip.driver}</p>
-              </div>
-              <div>
-                <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>Vehicle</p>
-                <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{trip.vehicle}</p>
-              </div>
-              <div>
-                <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>ETA / Arrival</p>
-                <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{trip.eta}</p>
-              </div>
-              <div>
-                <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>Status Update</p>
-                <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>GPS signal active</p>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-semibold">
-                <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Progress</span>
-                <span className={isDark ? 'text-indigo-400' : 'text-indigo-600'}>{trip.progress}%</span>
-              </div>
-              <div className={`h-2 w-full rounded-full overflow-hidden p-[1px] ${
-                isDark ? 'bg-slate-900' : 'bg-slate-100'
-              }`}>
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300"
-                  style={{ width: `${trip.progress}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-=======
-          <tbody className="divide-y divide-slate-850/50 text-sm text-slate-300">
-            {drivers.map((driver) => {
-              const initials = driver.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-              return (
-                <tr key={driver.id} className="hover:bg-slate-900/20 transition-colors">
-                  <td className="py-4.5 px-6 font-medium text-white">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-slate-850 flex items-center justify-center font-bold text-sm text-indigo-400 border border-slate-700">
-                        {initials}
-                      </div>
-                      <div>
-                        <p className="font-semibold">{driver.name}</p>
-                        <p className="text-xs text-slate-500 font-normal mt-0.5">ID: DRV-00{driver.id}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4.5 px-6 text-center">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                      driver.status === 'Available' ? 'bg-emerald-500/10 text-emerald-400' :
-                      driver.status === 'On Trip' ? 'bg-blue-500/10 text-blue-400' :
-                      driver.status === 'Suspended' ? 'bg-rose-500/10 text-rose-455' :
-                      'bg-slate-800 text-slate-400'
-                    }`}>
-                      <span className={`w-1 h-1 rounded-full ${
-                        driver.status === 'Available' ? 'bg-emerald-500' :
-                        driver.status === 'On Trip' ? 'bg-blue-500' :
-                        driver.status === 'Suspended' ? 'bg-rose-500' :
-                        'bg-slate-400'
-                      }`} />
-                      {driver.status}
-                    </span>
-                  </td>
-                  <td className="py-4.5 px-6 text-slate-200">
-                    <p className="font-semibold text-xs text-indigo-300">{driver.license_category}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">Num: {driver.license_number}</p>
-                    <p className="text-[10px] text-slate-500">Expires: {driver.license_expiry}</p>
-                  </td>
-                  <td className="py-4.5 px-6 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                      <span className="font-semibold text-white">{driver.safety_score}</span>
-                    </div>
-                  </td>
-                  <td className="py-4.5 px-6 text-slate-400 font-mono text-xs">
-                    {driver.contact_number}
-                  </td>
-                </tr>
-              );
-            })}
             {drivers.length === 0 && (
               <tr>
                 <td colSpan={5} className="py-8 text-center text-slate-500 text-sm">No drivers logged in database.</td>
@@ -246,7 +95,8 @@ const TripsView = ({ theme }) => {
   );
 };
 
-const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComplete, onCancel }) => {
+const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComplete, onCancel, theme }) => {
+  const isDark = theme === 'dark';
   const [completingTripId, setCompletingTripId] = useState(null);
   const [finalOdo, setFinalOdo] = useState('');
   const [fuelConsumed, setFuelConsumed] = useState('');
@@ -261,12 +111,12 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
 
   return (
     <div className="space-y-8">
-      <TripDispatchForm vehicles={vehicles} drivers={drivers} onDispatch={onDispatch} />
+      <TripDispatchForm vehicles={vehicles} drivers={drivers} onDispatch={onDispatch} theme={theme} />
 
       <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-white">Active Trips & Route Dispatches</h2>
-          <p className="text-sm text-slate-500 mt-0.5">Live monitoring of logistics routes and driver assignments.</p>
+          <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Active Trips & Route Dispatches</h2>
+          <p className={`text-sm mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Live monitoring of logistics routes and driver assignments.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -274,20 +124,24 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
             const vehicleObj = vehicles.find(v => v.id === trip.vehicle_id);
             const driverObj = drivers.find(d => d.id === trip.driver_id);
             return (
-              <div key={trip.id} className="bg-slate-950/45 border border-slate-800 rounded-2xl p-6 space-y-4 backdrop-blur-md flex flex-col justify-between">
+              <div key={trip.id} className={`border rounded-2xl p-6 space-y-4 backdrop-blur-md flex flex-col justify-between ${
+                isDark ? 'bg-slate-950/45 border-slate-800' : 'bg-white/70 border-slate-200/80'
+              }`}>
                 <div>
                   <div className="flex items-start justify-between">
                     <div>
-                      <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400">
+                      <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-md border ${
+                        isDark ? 'bg-slate-900 border-slate-800 text-slate-400' : 'bg-slate-100 border-slate-200/80 text-slate-500'
+                      }`}>
                         TRIP-00{trip.id}
                       </span>
-                      <h3 className="text-lg font-bold text-white mt-2">{trip.source} ➔ {trip.destination}</h3>
+                      <h3 className={`text-lg font-bold mt-2 ${isDark ? 'text-white' : 'text-slate-850'}`}>{trip.source} ➔ {trip.destination}</h3>
                     </div>
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                      trip.status === 'Dispatched' ? 'bg-blue-500/10 text-blue-400' :
-                      trip.status === 'Draft' ? 'bg-purple-500/10 text-purple-400' :
-                      trip.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400' :
-                      'bg-slate-800 text-slate-400'
+                      trip.status === 'Dispatched' ? 'bg-blue-500/10 text-blue-500' :
+                      trip.status === 'Draft' ? 'bg-purple-500/10 text-purple-500' :
+                      trip.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-500' :
+                      isDark ? 'bg-slate-800 text-slate-400' : 'bg-slate-100 text-slate-500'
                     }`}>
                       {trip.status}
                     </span>
@@ -295,25 +149,25 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
 
                   <div className="grid grid-cols-2 gap-4 py-2 text-xs">
                     <div>
-                      <p className="text-slate-500 font-medium">Driver</p>
-                      <p className="text-slate-200 font-semibold mt-0.5">{driverObj ? driverObj.name : 'Unknown'}</p>
+                      <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>Driver</p>
+                      <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{driverObj ? driverObj.name : 'Unknown'}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500 font-medium">Vehicle</p>
-                      <p className="text-slate-200 font-semibold mt-0.5">{vehicleObj ? vehicleObj.name : 'Unknown'}</p>
+                      <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>Vehicle</p>
+                      <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{vehicleObj ? vehicleObj.name : 'Unknown'}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500 font-medium">Cargo Load</p>
-                      <p className="text-slate-200 font-semibold mt-0.5">{trip.cargo_weight.toLocaleString()} kg</p>
+                      <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>Cargo Load</p>
+                      <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{trip.cargo_weight.toLocaleString()} kg</p>
                     </div>
                     <div>
-                      <p className="text-slate-500 font-medium">Planned Distance</p>
-                      <p className="text-slate-200 font-semibold mt-0.5">{trip.planned_distance} km</p>
+                      <p className={isDark ? 'text-slate-500 font-medium' : 'text-slate-400 font-semibold'}>Planned Distance</p>
+                      <p className={`font-bold mt-0.5 ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>{trip.planned_distance} km</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-900 space-y-3">
+                <div className={`pt-4 border-t space-y-3 ${isDark ? 'border-slate-900' : 'border-slate-200/80'}`}>
                   {trip.status === 'Draft' && (
                     <div className="flex gap-2">
                       <button
@@ -324,7 +178,9 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                       </button>
                       <button
                         onClick={() => onCancel(trip.id)}
-                        className="py-2 px-3 text-xs font-bold rounded-xl border border-slate-800 text-slate-400 hover:text-white transition-colors"
+                        className={`py-2 px-3 text-xs font-bold rounded-xl border transition-colors ${
+                          isDark ? 'border-slate-800 text-slate-400 hover:text-white' : 'border-slate-200 text-slate-550 hover:text-slate-900'
+                        }`}
                       >
                         Cancel
                       </button>
@@ -341,7 +197,9 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                       </button>
                       <button
                         onClick={() => onCancel(trip.id)}
-                        className="py-2 px-3 text-xs font-bold rounded-xl border border-slate-800 text-slate-400 hover:text-white transition-colors"
+                        className={`py-2 px-3 text-xs font-bold rounded-xl border transition-colors ${
+                          isDark ? 'border-slate-800 text-slate-400 hover:text-white' : 'border-slate-200 text-slate-550 hover:text-slate-900'
+                        }`}
                       >
                         Cancel
                       </button>
@@ -349,9 +207,11 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                   )}
 
                   {completingTripId === trip.id && (
-                    <form onSubmit={(e) => handleCompleteSubmit(e, trip.id)} className="space-y-3 p-3 bg-slate-900/50 border border-slate-800 rounded-xl">
+                    <form onSubmit={(e) => handleCompleteSubmit(e, trip.id)} className={`space-y-3 p-3 border rounded-xl ${
+                      isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-50 border-slate-200'
+                    }`}>
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                        <label className={`text-[10px] font-semibold uppercase tracking-wider block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                           Final Odometer (km)
                         </label>
                         <input
@@ -360,11 +220,13 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                           onChange={(e) => setFinalOdo(e.target.value)}
                           placeholder="e.g. 125000"
                           required
-                          className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 text-xs text-white rounded-lg p-1.5 outline-none"
+                          className={`w-full border text-xs rounded-lg p-1.5 outline-none focus:border-emerald-500 ${
+                            isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                          }`}
                         />
                       </div>
                       <div>
-                        <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                        <label className={`text-[10px] font-semibold uppercase tracking-wider block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                           Fuel Consumed (Liters)
                         </label>
                         <input
@@ -373,7 +235,9 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                           onChange={(e) => setFuelConsumed(e.target.value)}
                           placeholder="e.g. 80"
                           required
-                          className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 text-xs text-white rounded-lg p-1.5 outline-none"
+                          className={`w-full border text-xs rounded-lg p-1.5 outline-none focus:border-emerald-500 ${
+                            isDark ? 'bg-slate-950 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+                          }`}
                         />
                       </div>
                       <div className="flex gap-2 pt-1">
@@ -386,7 +250,9 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                         <button
                           type="button"
                           onClick={() => setCompletingTripId(null)}
-                          className="py-1.5 px-2.5 text-xs font-bold rounded-lg border border-slate-800 text-slate-400 hover:text-white transition-colors"
+                          className={`py-1.5 px-2.5 text-xs font-bold rounded-lg border transition-colors ${
+                            isDark ? 'border-slate-800 text-slate-400 hover:text-white' : 'border-slate-200 text-slate-550 hover:text-slate-900'
+                          }`}
                         >
                           Cancel
                         </button>
@@ -395,13 +261,13 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                   )}
 
                   {trip.status === 'Completed' && (
-                    <p className="text-xs text-slate-500 font-medium italic text-center">
+                    <p className={`text-xs font-medium italic text-center ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                       Trip successfully completed and archived.
                     </p>
                   )}
 
                   {trip.status === 'Cancelled' && (
-                    <p className="text-xs text-rose-500/70 font-medium italic text-center">
+                    <p className={`text-xs font-medium italic text-center ${isDark ? 'text-rose-500/70' : 'text-rose-600/70'}`}>
                       Trip was cancelled.
                     </p>
                   )}
@@ -414,113 +280,58 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
           )}
         </div>
       </div>
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
     </div>
   );
 };
 
-<<<<<<< HEAD
-const ExpensesView = ({ theme }) => {
+const ExpensesView = ({ expenses = [], vehicles = [], onAddExpense, theme }) => {
   const isDark = theme === 'dark';
-  const expenses = [
-    { id: 'EXP-1049', category: 'Fuel/Charging', vehicle: 'Volvo FH16', date: 'Jul 12, 2026', amount: 340.50, status: 'Paid' },
-    { id: 'EXP-1050', category: 'Maintenance (Tires)', vehicle: 'Mercedes Sprinter', date: 'Jul 11, 2026', amount: 890.00, status: 'Paid' },
-    { id: 'EXP-1051', category: 'Insurance Renewal', vehicle: 'Fleet Wide', date: 'Jul 10, 2026', amount: 4500.00, status: 'Pending' },
-    { id: 'EXP-1052', category: 'Tolls', vehicle: 'Scania R500', date: 'Jul 09, 2026', amount: 45.20, status: 'Paid' },
-    { id: 'EXP-1053', category: 'Charging Session', vehicle: 'Rivian EDV', date: 'Jul 09, 2026', amount: 22.80, status: 'Paid' }
-  ];
-
-  return (
-    <div className={`border backdrop-blur-md rounded-2xl overflow-hidden shadow-lg animate-slide-up ${
-      isDark ? 'bg-slate-950/45 border-slate-800' : 'bg-white/70 border-slate-200/80'
-    }`}>
-      <div className={`p-6 border-b ${isDark ? 'border-slate-900' : 'border-slate-200/80'}`}>
-        <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Expense Ledger</h2>
-        <p className={`text-sm mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Detailed accounting of fuel, charging, tolls, and maintenance logs.</p>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className={`border-b text-xs font-semibold uppercase tracking-wider text-slate-500 ${
-              isDark ? 'border-slate-900 bg-slate-900/30' : 'border-slate-200/80 bg-slate-50'
-            }`}>
-              <th className="py-4 px-6">Expense ID</th>
-              <th className="py-4 px-6">Category</th>
-              <th className="py-4 px-6">Vehicle</th>
-              <th className="py-4 px-6">Date</th>
-              <th className="py-4 px-6 text-right">Amount</th>
-              <th className="py-4 px-6 text-center">Status</th>
-            </tr>
-          </thead>
-          <tbody className={`divide-y text-sm ${
-            isDark ? 'divide-slate-900/60 text-slate-300' : 'divide-slate-200/60 text-slate-600'
-          }`}>
-            {expenses.map((expense) => (
-              <tr key={expense.id} className={isDark ? 'hover:bg-slate-900/20' : 'hover:bg-slate-50/50'}>
-                <td className="py-4.5 px-6 font-mono font-semibold">
-                  {expense.id}
-                </td>
-                <td className={isDark ? 'text-slate-200' : 'text-slate-700 font-semibold'}>
-                  {expense.category}
-                </td>
-                <td className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-550'}`}>
-                  {expense.vehicle}
-                </td>
-                <td className={`font-medium ${isDark ? 'text-slate-400' : 'text-slate-550'}`}>
-                  {expense.date}
-                </td>
-                <td className={`py-4.5 px-6 text-right font-mono font-bold ${isDark ? 'text-white' : 'text-slate-850'}`}>
-                  ${expense.amount.toFixed(2)}
-                </td>
-                <td className="py-4.5 px-6 text-center">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                    expense.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-500' :
-                    'bg-amber-500/10 text-amber-500'
-                  }`}>
-                    {expense.status}
-                  </span>
-                </td>
-=======
-const ExpensesView = ({ expenses = [], vehicles = [], onAddExpense }) => {
   return (
     <div className="space-y-8">
-      <LogsAndExpenses vehicles={vehicles} onAddExpense={onAddExpense} />
+      <LogsAndExpenses vehicles={vehicles} onAddExpense={onAddExpense} theme={theme} />
 
-      <div className="bg-slate-950/45 border border-slate-800 rounded-2xl backdrop-blur-md overflow-hidden">
-        <div className="p-6 border-b border-slate-850">
-          <h2 className="text-xl font-semibold text-white">Expense Ledger</h2>
-          <p className="text-sm text-slate-500 mt-0.5">Detailed accounting of fuel, charging, tolls, and maintenance logs.</p>
+      <div className={`border rounded-2xl backdrop-blur-md overflow-hidden shadow-lg animate-slide-up ${
+        isDark ? 'bg-slate-950/45 border-slate-800' : 'bg-white/70 border-slate-200/80'
+      }`}>
+        <div className={`p-6 border-b ${isDark ? 'border-slate-900' : 'border-slate-200/80'}`}>
+          <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Expense Ledger</h2>
+          <p className={`text-sm mt-0.5 ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Detailed accounting of fuel, charging, tolls, and maintenance logs.</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-slate-850 text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-900/30">
+              <tr className={`border-b text-xs font-semibold uppercase tracking-wider text-slate-500 ${
+                isDark ? 'border-slate-900 bg-slate-900/30' : 'border-slate-200/80 bg-slate-50'
+              }`}>
                 <th className="py-4 px-6">Expense ID</th>
                 <th className="py-4 px-6">Category</th>
                 <th className="py-4 px-6">Vehicle</th>
                 <th className="py-4 px-6 text-right">Amount</th>
                 <th className="py-4 px-6 text-center">Status</th>
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-850/50 text-sm text-slate-300">
+            <tbody className={`divide-y text-sm ${
+              isDark ? 'divide-slate-900/60 text-slate-300' : 'divide-slate-200/60 text-slate-655'
+            }`}>
               {expenses.map((expense) => {
                 return (
-                  <tr key={expense.id} className="hover:bg-slate-900/20 transition-colors">
-                    <td className="py-4.5 px-6 font-mono font-semibold text-white">
+                  <tr key={expense.id} className={isDark ? 'hover:bg-slate-900/20' : 'hover:bg-slate-50/50'}>
+                    <td className={`py-4.5 px-6 font-mono font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>
                       EXP-00{expense.id}
                     </td>
-                    <td className="py-4.5 px-6 text-slate-200">
+                    <td className={isDark ? 'text-slate-200' : 'text-slate-700 font-semibold'}>
                       {expense.type}
                     </td>
-                    <td className="py-4.5 px-6 text-slate-400 font-medium">
+                    <td className={`py-4.5 px-6 font-medium ${isDark ? 'text-slate-400' : 'text-slate-550'}`}>
                       {expense.vehicle_name || 'Fleet Wide'}
                     </td>
-                    <td className="py-4.5 px-6 text-right font-mono text-white font-semibold">
+                    <td className={`py-4.5 px-6 text-right font-mono font-semibold ${isDark ? 'text-white' : 'text-slate-800'}`}>
                       ${expense.amount.toFixed(2)}
                     </td>
                     <td className="py-4.5 px-6 text-center">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400">
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
+                        isDark ? 'bg-emerald-500/10 text-emerald-450' : 'bg-emerald-50 text-emerald-600'
+                      }`}>
                         Paid
                       </span>
                     </td>
@@ -553,6 +364,10 @@ function App() {
   // Signup states
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [signupName, setSignupName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   // Operational states
   const [kpis, setKpis] = useState({});
@@ -560,6 +375,71 @@ function App() {
   const [drivers, setDrivers] = useState([]);
   const [trips, setTrips] = useState([]);
   const [expenses, setExpenses] = useState([]);
+
+  const validateName = (nameVal) => {
+    if (!nameVal.trim()) {
+      setNameError('Full name is required');
+      return false;
+    }
+    setNameError('');
+    return true;
+  };
+
+  const validateEmail = (emailVal) => {
+    if (!emailVal.trim()) {
+      setEmailError('Email address is required');
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailVal)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
+  const validatePassword = (passVal) => {
+    if (!passVal) {
+      setPasswordError('Password is required');
+      return false;
+    }
+    if (passVal.length < 6) {
+      setPasswordError('Password must be at least 6 characters long');
+      return false;
+    }
+    setPasswordError('');
+    return true;
+  };
+
+  const handleNameChange = (e) => {
+    const val = e.target.value;
+    setSignupName(val);
+    validateName(val);
+  };
+
+  const handleEmailChange = (e) => {
+    const val = e.target.value;
+    setEmail(val);
+    validateEmail(val);
+  };
+
+  const handlePasswordChange = (e) => {
+    const val = e.target.value;
+    setPassword(val);
+    validatePassword(val);
+  };
+
+  const resetSignupState = () => {
+    setEmail('');
+    setPassword('');
+    setSignupName('');
+    setLoginError('');
+    setNameError('');
+    setEmailError('');
+    setPasswordError('');
+    setShowPassword(false);
+  };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -587,8 +467,13 @@ function App() {
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
     setLoginError('');
-    if (password.length < 6) {
-      setLoginError('Password must be at least 6 characters long');
+
+    const isNameValid = validateName(signupName);
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    if (!isNameValid || !isEmailValid || !isPasswordValid) {
+      setLoginError('Please correct the validation errors below.');
       return;
     }
     try {
@@ -611,8 +496,8 @@ function App() {
           localStorage.setItem('user', JSON.stringify({ id: dataLogin.id, name: dataLogin.name, email: dataLogin.email }));
           setToken(dataLogin.token);
           setUser({ id: dataLogin.id, name: dataLogin.name, email: dataLogin.email });
+          resetSignupState();
           setIsSigningUp(false);
-          setSignupName('');
         } else {
           setIsSigningUp(false);
           setLoginError('Account created successfully! Please sign in.');
@@ -812,43 +697,89 @@ function App() {
           )}
 
           {isSigningUp ? (
-            <form onSubmit={handleSignupSubmit} className="space-y-4">
+            <form onSubmit={handleSignupSubmit} className="space-y-5">
               <div>
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 block">Full Name</label>
                 <input
                   type="text"
                   value={signupName}
-                  onChange={(e) => setSignupName(e.target.value)}
+                  onChange={handleNameChange}
+                  onBlur={() => validateName(signupName)}
                   required
                   placeholder="e.g. Jane Doe"
-                  className="w-full bg-slate-900/50 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 px-3.5 transition-all outline-none"
+                  className={`w-full bg-slate-900/50 border focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 px-3.5 transition-all outline-none ${
+                    nameError ? 'border-rose-500/50 focus:border-rose-500' : 'border-slate-800 focus:border-blue-500'
+                  }`}
                 />
+                {nameError && (
+                  <p className="text-[11px] text-rose-500 font-semibold mt-1 animate-slide-up flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                    {nameError}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 block">Email Address</label>
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
+                  onBlur={() => validateEmail(email)}
                   required
                   placeholder="e.g. operator@transitops.com"
-                  className="w-full bg-slate-900/50 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 px-3.5 transition-all outline-none"
+                  className={`w-full bg-slate-900/50 border focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 px-3.5 transition-all outline-none ${
+                    emailError ? 'border-rose-500/50 focus:border-rose-500' : 'border-slate-800 focus:border-blue-500'
+                  }`}
                 />
+                {emailError && (
+                  <p className="text-[11px] text-rose-500 font-semibold mt-1 animate-slide-up flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                    {emailError}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5 block">Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Minimum 6 characters"
-                  className="w-full bg-slate-900/50 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 px-3.5 transition-all outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={handlePasswordChange}
+                    onBlur={() => validatePassword(password)}
+                    required
+                    placeholder="Minimum 6 characters"
+                    className={`w-full bg-slate-900/50 border focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 pl-3.5 pr-10 transition-all outline-none ${
+                      passwordError ? 'border-rose-500/50 focus:border-rose-500' : 'border-slate-800 focus:border-blue-500'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1"
+                    title={showPassword ? 'Hide Password' : 'Show Password'}
+                  >
+                    {showPassword ? (
+                      <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                {passwordError && (
+                  <p className="text-[11px] text-rose-500 font-semibold mt-1 animate-slide-up flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                    {passwordError}
+                  </p>
+                )}
               </div>
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold text-sm shadow-lg shadow-blue-950/50 transition-all active:scale-98"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold text-sm shadow-lg shadow-blue-950/50 transition-all active:scale-98 cursor-pointer mt-1"
               >
                 Sign Up
               </button>
@@ -879,7 +810,7 @@ function App() {
               </div>
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold text-sm shadow-lg shadow-blue-950/50 transition-all active:scale-98"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-500 hover:to-indigo-600 text-white font-semibold text-sm shadow-lg shadow-blue-950/50 transition-all active:scale-98 cursor-pointer"
               >
                 Sign In
               </button>
@@ -889,14 +820,14 @@ function App() {
           <div className="pt-2 border-t border-slate-900 flex flex-col items-center gap-2.5 text-center">
             {isSigningUp ? (
               <button 
-                onClick={() => { setIsSigningUp(false); setLoginError(''); }}
+                onClick={() => { setIsSigningUp(false); resetSignupState(); }}
                 className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors cursor-pointer"
               >
                 Already have an account? Sign In
               </button>
             ) : (
               <button 
-                onClick={() => { setIsSigningUp(true); setLoginError(''); }}
+                onClick={() => { setIsSigningUp(true); resetSignupState(); }}
                 className="text-xs text-slate-400 hover:text-slate-300 font-semibold transition-colors cursor-pointer border border-slate-850 hover:border-slate-750 px-4 py-1.5 rounded-lg"
               >
                 Create New Account (Sign Up)
@@ -913,37 +844,20 @@ function App() {
       case 'Dashboard':
         return (
           <div className="space-y-8">
-<<<<<<< HEAD
-            <KPIMetricsGrid theme={theme} />
-=======
-            <KPIMetricsGrid kpis={kpis} />
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+            <KPIMetricsGrid kpis={kpis} theme={theme} />
             <div className="space-y-4">
               <div>
                 <h2 className={`text-xl font-semibold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Fleet Performance & ROI</h2>
                 <p className={`text-sm mt-0.5 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>Filter, search, and analyze fuel efficiency and operational return rates.</p>
               </div>
-<<<<<<< HEAD
-              <AnalyticsTable theme={theme} />
-=======
-              <AnalyticsTable token={token} />
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+              <AnalyticsTable token={token} theme={theme} />
             </div>
           </div>
         );
       case 'Vehicles':
-<<<<<<< HEAD
-        return <AnalyticsTable theme={theme} />;
+        return <AnalyticsTable token={token} theme={theme} />;
       case 'Drivers':
-        return <DriversView theme={theme} />;
-      case 'Trips':
-        return <TripsView theme={theme} />;
-      case 'Expenses':
-        return <ExpensesView theme={theme} />;
-=======
-        return <AnalyticsTable token={token} />;
-      case 'Drivers':
-        return <DriversView drivers={drivers} />;
+        return <DriversView drivers={drivers} theme={theme} />;
       case 'Trips':
         return (
           <TripsView
@@ -953,13 +867,13 @@ function App() {
             onDispatch={handleDispatchDraft}
             onComplete={handleCompleteTrip}
             onCancel={handleCancelTrip}
+            theme={theme}
           />
         );
       case 'Expenses':
-        return <ExpensesView expenses={expenses} vehicles={vehicles} onAddExpense={handleAddExpenseOrLog} />;
+        return <ExpensesView expenses={expenses} vehicles={vehicles} onAddExpense={handleAddExpenseOrLog} theme={theme} />;
       case 'Forms':
-        return <RegistrationForms token={token} onSuccess={fetchAllData} />;
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+        return <RegistrationForms token={token} onSuccess={fetchAllData} theme={theme} />;
       default:
         return null;
     }
@@ -968,11 +882,14 @@ function App() {
   const isDark = theme === 'dark';
 
   return (
-<<<<<<< HEAD
-    <SidebarLayout activeItem={activeTab} setActiveItem={setActiveTab} theme={theme} setTheme={setTheme}>
-=======
-    <SidebarLayout activeItem={activeTab} setActiveItem={setActiveTab} user={user} onLogout={handleLogout}>
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+    <SidebarLayout 
+      activeItem={activeTab} 
+      setActiveItem={setActiveTab} 
+      user={user} 
+      onLogout={handleLogout} 
+      theme={theme} 
+      setTheme={setTheme}
+    >
       <div className="space-y-6">
         <div className="animate-slide-up">
           <h1 className={`text-3xl font-bold tracking-tight transition-colors duration-300 ${isDark ? 'text-white' : 'text-slate-900'}`}>

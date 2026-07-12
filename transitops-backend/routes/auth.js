@@ -48,8 +48,8 @@ router.post('/signup', async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    const stmt = db.prepare('INSERT INTO users (name, email, password_hash, role, password) VALUES (?, ?, ?, ?, ?)');
-    const info = stmt.run(name, email, passwordHash, role, passwordHash);
+    const stmt = db.prepare('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)');
+    const info = stmt.run(name, email, passwordHash, role);
 
     const newUser = {
       id: Number(info.lastInsertRowid),
@@ -94,8 +94,8 @@ router.post('/register', async (req, res) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    const stmt = db.prepare('INSERT INTO users (name, email, password_hash, password) VALUES (?, ?, ?, ?)');
-    const info = stmt.run(name, email, passwordHash, passwordHash);
+    const stmt = db.prepare('INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)');
+    const info = stmt.run(name, email, passwordHash, 'Fleet Manager');
 
     const newUser = {
       id: Number(info.lastInsertRowid),

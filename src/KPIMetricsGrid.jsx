@@ -1,12 +1,7 @@
 import React from 'react';
 
-<<<<<<< HEAD
-const KPIMetricsGrid = ({ theme }) => {
+const KPIMetricsGrid = ({ kpis = {}, theme }) => {
   const isDark = theme === 'dark';
-
-=======
-const KPIMetricsGrid = ({ kpis = {} }) => {
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
   const metrics = [
     {
       title: 'Active Vehicles',
@@ -153,13 +148,8 @@ const KPIMetricsGrid = ({ kpis = {} }) => {
                 Fleet Utilization (%)
               </span>
               <div className="flex items-baseline gap-2">
-<<<<<<< HEAD
                 <p className={`text-4xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  87.4%
-=======
-                <p className="text-4xl font-extrabold text-white tracking-tight">
                   {kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '...'}
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
                 </p>
                 <span className="text-xs font-semibold text-emerald-500 flex items-center gap-0.5">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -172,13 +162,8 @@ const KPIMetricsGrid = ({ kpis = {} }) => {
 
             <div className="flex-1 max-w-md w-full space-y-2">
               <div className="flex justify-between text-xs font-semibold">
-<<<<<<< HEAD
                 <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Target: 90%</span>
-                <span className={isDark ? 'text-indigo-400' : 'text-indigo-600'}>87.4% Reached</span>
-=======
-                <span className="text-slate-400">Target: 90%</span>
-                <span className="text-indigo-400">{kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '...'} Reached</span>
->>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
+                <span className={isDark ? 'text-indigo-400' : 'text-indigo-600'}>{kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '...'} Reached</span>
               </div>
               <div className={`h-3 w-full rounded-full overflow-hidden p-[2px] border ${
                 isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
