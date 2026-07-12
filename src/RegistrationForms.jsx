@@ -90,7 +90,7 @@ const RegistrationForms = ({ token, onSuccess }) => {
             license_number: formData.licenseNumber,
             license_category: formData.licenseCategory,
             license_expiry: formData.licenseExpiryDate,
-            contact_number: formData.contactNumber,
+            contact: formData.contactNumber,
             safety_score: Number(formData.safetyScore),
             status: backendStatus
           })

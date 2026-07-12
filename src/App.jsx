@@ -95,7 +95,7 @@ const DriversView = ({ drivers = [], theme }) => {
   );
 };
 
-const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComplete, onCancel, theme }) => {
+const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatchNew, onDispatchDraft, onComplete, onCancel, theme }) => {
   const isDark = theme === 'dark';
   const [completingTripId, setCompletingTripId] = useState(null);
   const [finalOdo, setFinalOdo] = useState('');
@@ -111,7 +111,7 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
 
   return (
     <div className="space-y-8">
-      <TripDispatchForm vehicles={vehicles} drivers={drivers} onDispatch={onDispatch} theme={theme} />
+      <TripDispatchForm vehicles={vehicles} drivers={drivers} onDispatch={onDispatchNew} theme={theme} />
 
       <div className="space-y-4">
         <div>
@@ -171,7 +171,7 @@ const TripsView = ({ trips = [], vehicles = [], drivers = [], onDispatch, onComp
                   {trip.status === 'Draft' && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => onDispatch(trip.id)}
+                        onClick={() => onDispatchDraft(trip.id)}
                         className="flex-1 py-2 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-500 text-white transition-colors"
                       >
                         Dispatch Route
@@ -864,7 +864,8 @@ function App() {
             trips={trips}
             vehicles={vehicles}
             drivers={drivers}
-            onDispatch={handleDispatchDraft}
+            onDispatchNew={handleDispatchTrip}
+            onDispatchDraft={handleDispatchDraft}
             onComplete={handleCompleteTrip}
             onCancel={handleCancelTrip}
             theme={theme}
