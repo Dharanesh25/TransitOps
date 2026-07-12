@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import SidebarLayout from './SidebarLayout';
 import KPIMetricsGrid from './KPIMetricsGrid';
 import AnalyticsTable from './AnalyticsTable';
+import RegistrationForms from './RegistrationForms';
+import TripDispatchForm from './TripDispatchForm';
+import LogsAndExpenses from './LogsAndExpenses';
 
 const DriversView = () => {
   const drivers = [
@@ -81,136 +84,150 @@ const DriversView = () => {
 };
 
 const TripsView = () => {
-  const trips = [
+  const [trips, setTrips] = useState([
     { id: 'TRIP-9082', route: 'Chicago to Detroit', progress: 75, driver: 'Michael Cole', vehicle: 'Volvo FH16', status: 'In Transit', eta: '45 mins' },
     { id: 'TRIP-9083', route: 'Los Angeles to Phoenix', progress: 10, driver: 'Carlos Diaz', vehicle: 'Scania R500', status: 'In Transit', eta: '4 hrs 12 mins' },
     { id: 'TRIP-9084', route: 'Atlanta to Savannah', progress: 0, driver: 'Sarah Jenkins', vehicle: 'Ford E-Transit', status: 'Scheduled', eta: 'Departs 11:30 AM' },
     { id: 'TRIP-9085', route: 'Dallas to Houston', progress: 100, driver: 'Emma Wilson', vehicle: 'Rivian EDV', status: 'Completed', eta: 'Arrived' }
-  ];
+  ]);
+
+  const handleDispatch = (newTrip) => {
+    setTrips((prev) => [newTrip, ...prev]);
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      <TripDispatchForm onDispatch={handleDispatch} />
+
+      <div className="space-y-4">
         <div>
-          <h2 className="text-xl font-semibold text-white">Trips & Route Dispatches</h2>
+          <h2 className="text-xl font-semibold text-white">Active Trips & Route Dispatches</h2>
           <p className="text-sm text-slate-500 mt-0.5">Live monitoring of logistics routes and delivery completions.</p>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {trips.map((trip) => (
-          <div key={trip.id} className="bg-slate-950/45 border border-slate-800 rounded-2xl p-6 space-y-4 backdrop-blur-md">
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400">
-                  {trip.id}
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {trips.map((trip) => (
+            <div key={trip.id} className="bg-slate-950/45 border border-slate-800 rounded-2xl p-6 space-y-4 backdrop-blur-md">
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-slate-400">
+                    {trip.id}
+                  </span>
+                  <h3 className="text-lg font-bold text-white mt-2">{trip.route}</h3>
+                </div>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
+                  trip.status === 'In Transit' ? 'bg-blue-500/10 text-blue-400' :
+                  trip.status === 'Scheduled' ? 'bg-purple-500/10 text-purple-400' :
+                  'bg-emerald-500/10 text-emerald-400'
+                }`}>
+                  {trip.status}
                 </span>
-                <h3 className="text-lg font-bold text-white mt-2">{trip.route}</h3>
               </div>
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                trip.status === 'In Transit' ? 'bg-blue-500/10 text-blue-400' :
-                trip.status === 'Scheduled' ? 'bg-purple-500/10 text-purple-400' :
-                'bg-emerald-500/10 text-emerald-400'
-              }`}>
-                {trip.status}
-              </span>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4 py-2 text-xs">
-              <div>
-                <p className="text-slate-500 font-medium">Driver</p>
-                <p className="text-slate-200 font-semibold mt-0.5">{trip.driver}</p>
+              <div className="grid grid-cols-2 gap-4 py-2 text-xs">
+                <div>
+                  <p className="text-slate-500 font-medium">Driver</p>
+                  <p className="text-slate-200 font-semibold mt-0.5">{trip.driver}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 font-medium">Vehicle</p>
+                  <p className="text-slate-200 font-semibold mt-0.5">{trip.vehicle}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 font-medium">ETA / Arrival</p>
+                  <p className="text-slate-200 font-semibold mt-0.5">{trip.eta}</p>
+                </div>
+                <div>
+                  <p className="text-slate-500 font-medium">Status Update</p>
+                  <p className="text-slate-200 font-semibold mt-0.5">GPS signal active</p>
+                </div>
               </div>
-              <div>
-                <p className="text-slate-500 font-medium">Vehicle</p>
-                <p className="text-slate-200 font-semibold mt-0.5">{trip.vehicle}</p>
-              </div>
-              <div>
-                <p className="text-slate-500 font-medium">ETA / Arrival</p>
-                <p className="text-slate-200 font-semibold mt-0.5">{trip.eta}</p>
-              </div>
-              <div>
-                <p className="text-slate-500 font-medium">Status Update</p>
-                <p className="text-slate-200 font-semibold mt-0.5">GPS signal active</p>
-              </div>
-            </div>
 
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-xs font-semibold">
-                <span className="text-slate-400">Progress</span>
-                <span className="text-indigo-400">{trip.progress}%</span>
-              </div>
-              <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden p-[1px]">
-                <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300"
-                  style={{ width: `${trip.progress}%` }}
-                />
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs font-semibold">
+                  <span className="text-slate-400">Progress</span>
+                  <span className="text-indigo-400">{trip.progress}%</span>
+                </div>
+                <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden p-[1px]">
+                  <div
+                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300"
+                    style={{ width: `${trip.progress}%` }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
 const ExpensesView = () => {
-  const expenses = [
+  const [expenses, setExpenses] = useState([
     { id: 'EXP-1049', category: 'Fuel/Charging', vehicle: 'Volvo FH16', date: 'Jul 12, 2026', amount: 340.50, status: 'Paid' },
     { id: 'EXP-1050', category: 'Maintenance (Tires)', vehicle: 'Mercedes Sprinter', date: 'Jul 11, 2026', amount: 890.00, status: 'Paid' },
     { id: 'EXP-1051', category: 'Insurance Renewal', vehicle: 'Fleet Wide', date: 'Jul 10, 2026', amount: 4500.00, status: 'Pending' },
     { id: 'EXP-1052', category: 'Tolls', vehicle: 'Scania R500', date: 'Jul 09, 2026', amount: 45.20, status: 'Paid' },
     { id: 'EXP-1053', category: 'Charging Session', vehicle: 'Rivian EDV', date: 'Jul 09, 2026', amount: 22.80, status: 'Paid' }
-  ];
+  ]);
+
+  const handleAddExpense = (newExpense) => {
+    setExpenses((prev) => [newExpense, ...prev]);
+  };
 
   return (
-    <div className="bg-slate-950/45 border border-slate-800 rounded-2xl backdrop-blur-md overflow-hidden">
-      <div className="p-6 border-b border-slate-850">
-        <h2 className="text-xl font-semibold text-white">Expense Ledger</h2>
-        <p className="text-sm text-slate-500 mt-0.5">Detailed accounting of fuel, charging, tolls, and maintenance logs.</p>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b border-slate-850 text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-900/30">
-              <th className="py-4 px-6">Expense ID</th>
-              <th className="py-4 px-6">Category</th>
-              <th className="py-4 px-6">Vehicle</th>
-              <th className="py-4 px-6">Date</th>
-              <th className="py-4 px-6 text-right">Amount</th>
-              <th className="py-4 px-6 text-center">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-850/50 text-sm text-slate-300">
-            {expenses.map((expense) => (
-              <tr key={expense.id} className="hover:bg-slate-900/20 transition-colors">
-                <td className="py-4.5 px-6 font-mono font-semibold text-white">
-                  {expense.id}
-                </td>
-                <td className="py-4.5 px-6 text-slate-200">
-                  {expense.category}
-                </td>
-                <td className="py-4.5 px-6 text-slate-400 font-medium">
-                  {expense.vehicle}
-                </td>
-                <td className="py-4.5 px-6 text-slate-400 font-medium">
-                  {expense.date}
-                </td>
-                <td className="py-4.5 px-6 text-right font-mono text-white font-semibold">
-                  ${expense.amount.toFixed(2)}
-                </td>
-                <td className="py-4.5 px-6 text-center">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                    expense.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400' :
-                    'bg-amber-500/10 text-amber-400'
-                  }`}>
-                    {expense.status}
-                  </span>
-                </td>
+    <div className="space-y-8">
+      <LogsAndExpenses onAddExpense={handleAddExpense} />
+
+      <div className="bg-slate-950/45 border border-slate-800 rounded-2xl backdrop-blur-md overflow-hidden">
+        <div className="p-6 border-b border-slate-850">
+          <h2 className="text-xl font-semibold text-white">Expense Ledger</h2>
+          <p className="text-sm text-slate-500 mt-0.5">Detailed accounting of fuel, charging, tolls, and maintenance logs.</p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-slate-850 text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-900/30">
+                <th className="py-4 px-6">Expense ID</th>
+                <th className="py-4 px-6">Category</th>
+                <th className="py-4 px-6">Vehicle</th>
+                <th className="py-4 px-6">Date</th>
+                <th className="py-4 px-6 text-right">Amount</th>
+                <th className="py-4 px-6 text-center">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-850/50 text-sm text-slate-300">
+              {expenses.map((expense) => (
+                <tr key={expense.id} className="hover:bg-slate-900/20 transition-colors">
+                  <td className="py-4.5 px-6 font-mono font-semibold text-white">
+                    {expense.id}
+                  </td>
+                  <td className="py-4.5 px-6 text-slate-200">
+                    {expense.category}
+                  </td>
+                  <td className="py-4.5 px-6 text-slate-400 font-medium">
+                    {expense.vehicle}
+                  </td>
+                  <td className="py-4.5 px-6 text-slate-400 font-medium">
+                    {expense.date}
+                  </td>
+                  <td className="py-4.5 px-6 text-right font-mono text-white font-semibold">
+                    ${expense.amount.toFixed(2)}
+                  </td>
+                  <td className="py-4.5 px-6 text-center">
+                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
+                      expense.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400' :
+                      'bg-amber-500/10 text-amber-400'
+                    }`}>
+                      {expense.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -242,6 +259,8 @@ function App() {
         return <TripsView />;
       case 'Expenses':
         return <ExpensesView />;
+      case 'Forms':
+        return <RegistrationForms />;
       default:
         return null;
     }
