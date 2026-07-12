@@ -10,8 +10,14 @@ const { verifyToken } = require('../middleware/auth');
 router.get('/', verifyToken, (req, res) => {
   try {
     const expenses = db.prepare(`
-      SELECT e.*, v.name as vehicle_name 
-      FROM expenses e
+      SELECT e.id, e.type, e.vehicle_id, e.amount, e.date, v.name as vehicle_name 
+      FROM (
+        SELECT id, 'Fuel Log' AS type, vehicle_id, cost AS amount, date FROM fuel_logs
+        UNION ALL
+        SELECT id, 'Maintenance: ' || type AS type, vehicle_id, cost AS amount, SUBSTR(created_at, 1, 10) AS date FROM maintenance
+        UNION ALL
+        SELECT id, type, vehicle_id, amount, date FROM expenses
+      ) e
       JOIN vehicles v ON e.vehicle_id = v.id
       ORDER BY e.date DESC, e.id DESC
     `).all();

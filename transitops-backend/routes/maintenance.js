@@ -9,11 +9,13 @@ const { verifyToken, requireRole } = require('../middleware/auth');
  * Runs atomically inside a db.transaction.
  */
 router.post('/', verifyToken, requireRole('Fleet Manager'), (req, res) => {
-  const { vehicle_id, type, cost } = req.body;
+  const { vehicle_id, type, cost, status } = req.body;
 
   if (vehicle_id === undefined || !type || cost === undefined) {
     return res.status(400).json({ error: true, message: "Missing required fields: vehicle_id, type, cost" });
   }
+
+  const finalStatus = status === 'Closed' ? 'Closed' : 'Open';
 
   try {
     let newId;
@@ -29,15 +31,24 @@ router.post('/', verifyToken, requireRole('Fleet Manager'), (req, res) => {
       }
 
       // 2. Insert maintenance record
-      const stmt = db.prepare(`
-        INSERT INTO maintenance (vehicle_id, type, cost, status)
-        VALUES (?, ?, ?, 'Open')
-      `);
-      const info = stmt.run(vehicle_id, type, Number(cost));
-      newId = Number(info.lastInsertRowid);
+      if (finalStatus === 'Closed') {
+        const stmt = db.prepare(`
+          INSERT INTO maintenance (vehicle_id, type, cost, status, closed_at)
+          VALUES (?, ?, ?, 'Closed', strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime'))
+        `);
+        const info = stmt.run(vehicle_id, type, Number(cost));
+        newId = Number(info.lastInsertRowid);
+      } else {
+        const stmt = db.prepare(`
+          INSERT INTO maintenance (vehicle_id, type, cost, status)
+          VALUES (?, ?, ?, 'Open')
+        `);
+        const info = stmt.run(vehicle_id, type, Number(cost));
+        newId = Number(info.lastInsertRowid);
 
-      // 3. Update vehicle status to 'In Shop'
-      db.prepare(`UPDATE vehicles SET status = 'In Shop' WHERE id = ?`).run(vehicle_id);
+        // 3. Update vehicle status to 'In Shop' only if it's Open
+        db.prepare(`UPDATE vehicles SET status = 'In Shop' WHERE id = ?`).run(vehicle_id);
+      }
     })();
 
     return res.status(201).json({
@@ -45,7 +56,7 @@ router.post('/', verifyToken, requireRole('Fleet Manager'), (req, res) => {
       vehicle_id: Number(vehicle_id),
       type,
       cost: Number(cost),
-      status: 'Open'
+      status: finalStatus
     });
   } catch (err) {
     if (err.message === "VEHICLE_NOT_FOUND") {
