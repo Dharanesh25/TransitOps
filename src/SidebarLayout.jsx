@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SidebarLayout = ({ children, activeItem, setActiveItem }) => {
+const SidebarLayout = ({ children, activeItem, setActiveItem, theme, setTheme }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -48,45 +48,90 @@ const SidebarLayout = ({ children, activeItem, setActiveItem }) => {
     }
   ];
 
+  const isDark = theme === 'dark';
+
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex font-sans antialiased">
+    <div className={`min-h-screen flex font-sans antialiased transition-colors duration-300 ${
+      isDark ? 'bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100' : 'bg-gradient-to-br from-slate-50 via-slate-100 to-blue-50/70 text-slate-800'
+    }`}>
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm lg:hidden transition-opacity duration-300"
+          className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
+            isDark ? 'bg-slate-950/60 backdrop-blur-sm' : 'bg-slate-900/40 backdrop-blur-sm'
+          }`}
           onClick={() => setIsOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-slate-950 border-r border-slate-800 transition-all duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col backdrop-blur-md transition-all duration-300 lg:static lg:translate-x-0 ${
           isOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
-        } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'}`}
+        } ${isCollapsed ? 'lg:w-20' : 'lg:w-64'} ${
+          isDark ? 'bg-slate-950/70 border-r border-slate-900' : 'bg-white/75 border-r border-slate-200/80'
+        }`}
       >
-        <div className="h-16 flex items-center justify-between px-6 border-b border-slate-850">
+        <div className={`h-16 flex items-center justify-between px-6 border-b ${
+          isDark ? 'border-slate-900' : 'border-slate-200/80'
+        }`}>
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="flex-shrink-0 w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <span className={`font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent transition-opacity duration-300 whitespace-nowrap ${isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100'}`}>
+            <span className={`font-bold text-lg tracking-tight transition-opacity duration-300 whitespace-nowrap ${
+              isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100'
+            } ${
+              isDark ? 'bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent' : 'text-slate-900'
+            }`}>
               TransitOps
             </span>
           </div>
 
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900 transition-colors"
-          >
-            <svg
-              className={`w-4 h-4 transform transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          {!isCollapsed && (
+            <div className="hidden lg:flex items-center gap-1.5">
+              <button
+                onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                  isDark ? 'border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900' : 'border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+              >
+                {isDark ? (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                )}
+              </button>
+
+              <button
+                onClick={() => setIsCollapsed(true)}
+                className={`w-7-5 h-7.5 flex items-center justify-center rounded-lg border transition-colors cursor-pointer p-1.5 ${
+                  isDark ? 'border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900' : 'border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
+          )}
+
+          {isCollapsed && (
+            <button
+              onClick={() => setIsCollapsed(false)}
+              className={`hidden lg:flex items-center justify-center w-8 h-8 rounded-lg border transition-colors cursor-pointer ${
+                isDark ? 'border-slate-800 text-slate-400 hover:text-white hover:bg-slate-900' : 'border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+              }`}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-            </svg>
-          </button>
+              <svg className="w-4 h-4 transform rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
@@ -99,23 +144,33 @@ const SidebarLayout = ({ children, activeItem, setActiveItem }) => {
                   setActiveItem(item.name);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative ${
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative cursor-pointer ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-600/10 to-indigo-600/5 text-blue-400 border border-blue-500/20'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
+                    ? isDark
+                      ? 'bg-gradient-to-r from-blue-600/10 to-indigo-600/5 text-blue-400 border border-blue-500/20'
+                      : 'bg-gradient-to-r from-blue-600/10 to-indigo-600/5 text-blue-600 border border-blue-600/25'
+                    : isDark
+                      ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50 border border-transparent'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 border border-transparent'
                 }`}
               >
                 {isActive && (
                   <div className="absolute left-0 top-3 bottom-3 w-1 rounded-r-md bg-blue-500" />
                 )}
-                <div className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-blue-400' : 'text-slate-400 group-hover:text-slate-300'}`}>
+                <div className={`transition-transform duration-200 group-hover:scale-110 ${
+                  isActive 
+                    ? isDark ? 'text-blue-400' : 'text-blue-600'
+                    : isDark ? 'text-slate-400 group-hover:text-slate-300' : 'text-slate-500 group-hover:text-slate-700'
+                }`}>
                   {item.icon}
                 </div>
                 <span className={`font-medium text-sm transition-opacity duration-300 whitespace-nowrap ${isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100'}`}>
                   {item.name}
                 </span>
                 {isCollapsed && (
-                  <div className="absolute left-full ml-4 px-2.5 py-1.5 bg-slate-950 border border-slate-800 text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50">
+                  <div className={`absolute left-full ml-4 px-2.5 py-1.5 text-xs font-medium rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50 ${
+                    isDark ? 'bg-slate-950 border border-slate-800 text-slate-200' : 'bg-white border border-slate-200 text-slate-800'
+                  }`}>
                     {item.name}
                   </div>
                 )}
@@ -124,22 +179,28 @@ const SidebarLayout = ({ children, activeItem, setActiveItem }) => {
           })}
         </nav>
 
-        <div className="p-4 border-t border-slate-850">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-900/40 transition-colors duration-200 group relative cursor-pointer">
+        <div className={`p-4 border-t ${isDark ? 'border-slate-900' : 'border-slate-200/80'}`}>
+          <div className={`flex items-center gap-3 p-2 rounded-xl transition-colors duration-200 group relative cursor-pointer ${
+            isDark ? 'hover:bg-slate-900/40' : 'hover:bg-slate-100/50'
+          }`}>
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-sm font-semibold border border-slate-700 shadow-md">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-semibold border shadow-md ${
+                isDark ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-100 border-slate-200 text-slate-700'
+              }`}>
                 JD
               </div>
-              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-slate-950 animate-pulse" />
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-transparent animate-pulse" />
             </div>
             <div className={`flex-1 min-w-0 transition-opacity duration-300 ${isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100'}`}>
-              <p className="text-sm font-semibold text-slate-200 truncate">John Doe</p>
-              <p className="text-xs text-slate-500 truncate">Fleet Manager</p>
+              <p className={`text-sm font-semibold truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>John Doe</p>
+              <p className={`text-xs truncate ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Fleet Manager</p>
             </div>
             {isCollapsed && (
-              <div className="absolute left-full ml-4 p-3 bg-slate-950 border border-slate-800 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50">
-                <p className="text-sm font-semibold text-slate-200">John Doe</p>
-                <p className="text-xs text-slate-500">Fleet Manager</p>
+              <div className={`absolute left-full ml-4 p-3 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50 ${
+                isDark ? 'bg-slate-950 border border-slate-800' : 'bg-white border border-slate-200'
+              }`}>
+                <p className={`text-sm font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>John Doe</p>
+                <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Fleet Manager</p>
               </div>
             )}
           </div>
@@ -147,27 +208,50 @@ const SidebarLayout = ({ children, activeItem, setActiveItem }) => {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <header className="h-16 flex items-center justify-between px-6 bg-slate-950/50 backdrop-blur-md border-b border-slate-850 lg:hidden">
+        <header className={`h-16 flex items-center justify-between px-6 backdrop-blur-md border-b lg:hidden ${
+          isDark ? 'bg-slate-950/50 border-slate-900' : 'bg-white/50 border-slate-200/85'
+        }`}>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <span className="font-bold text-base tracking-tight text-white">TransitOps</span>
+            <span className={`font-bold text-base tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>TransitOps</span>
           </div>
 
-          <button
-            onClick={() => setIsOpen(true)}
-            className="p-2 -mr-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-900 transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                isDark ? 'text-slate-400 hover:text-white hover:bg-slate-900' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              {isDark ? (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+              )}
+            </button>
+
+            <button
+              onClick={() => setIsOpen(true)}
+              className={`p-2 rounded-lg transition-colors cursor-pointer ${
+                isDark ? 'text-slate-400 hover:text-white hover:bg-slate-900' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-900/60">
+        <main className="flex-1 overflow-y-auto p-6 md:p-8">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
