@@ -1,12 +1,16 @@
 import React from 'react';
 
+<<<<<<< HEAD
 const KPIMetricsGrid = ({ theme }) => {
   const isDark = theme === 'dark';
 
+=======
+const KPIMetricsGrid = ({ kpis = {} }) => {
+>>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
   const metrics = [
     {
       title: 'Active Vehicles',
-      value: '142',
+      value: kpis.activeVehicles !== undefined ? String(kpis.activeVehicles) : '...',
       change: '+4 vs yesterday',
       isPositive: true,
       color: isDark ? 'from-blue-500/20 to-indigo-500/5' : 'from-blue-500/8 to-indigo-500/3',
@@ -22,7 +26,7 @@ const KPIMetricsGrid = ({ theme }) => {
     },
     {
       title: 'Available Vehicles',
-      value: '28',
+      value: kpis.availableVehicles !== undefined ? String(kpis.availableVehicles) : '...',
       change: 'Fully prepped',
       isPositive: true,
       color: isDark ? 'from-emerald-500/20 to-teal-500/5' : 'from-emerald-500/8 to-teal-500/3',
@@ -37,7 +41,7 @@ const KPIMetricsGrid = ({ theme }) => {
     },
     {
       title: 'Vehicles in Maintenance',
-      value: '12',
+      value: kpis.vehiclesInMaintenance !== undefined ? String(kpis.vehiclesInMaintenance) : '...',
       change: '3 scheduled today',
       isPositive: false,
       color: isDark ? 'from-amber-500/20 to-orange-500/5' : 'from-amber-500/8 to-orange-500/3',
@@ -53,7 +57,7 @@ const KPIMetricsGrid = ({ theme }) => {
     },
     {
       title: 'Active Trips',
-      value: '84',
+      value: kpis.activeTrips !== undefined ? String(kpis.activeTrips) : '...',
       change: '+12% from last hour',
       isPositive: true,
       color: isDark ? 'from-blue-500/20 to-sky-500/5' : 'from-blue-500/8 to-sky-500/3',
@@ -68,7 +72,7 @@ const KPIMetricsGrid = ({ theme }) => {
     },
     {
       title: 'Pending Trips',
-      value: '19',
+      value: kpis.pendingTrips !== undefined ? String(kpis.pendingTrips) : '...',
       change: 'Awaiting dispatch',
       isPositive: false,
       color: isDark ? 'from-violet-500/20 to-purple-500/5' : 'from-violet-500/8 to-purple-500/3',
@@ -83,7 +87,7 @@ const KPIMetricsGrid = ({ theme }) => {
     },
     {
       title: 'Drivers On Duty',
-      value: '96',
+      value: kpis.driversOnDuty !== undefined ? String(kpis.driversOnDuty) : '...',
       change: '8 standby drivers',
       isPositive: true,
       color: isDark ? 'from-indigo-500/20 to-purple-500/5' : 'from-indigo-500/8 to-purple-500/3',
@@ -149,29 +153,39 @@ const KPIMetricsGrid = ({ theme }) => {
                 Fleet Utilization (%)
               </span>
               <div className="flex items-baseline gap-2">
+<<<<<<< HEAD
                 <p className={`text-4xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                   87.4%
+=======
+                <p className="text-4xl font-extrabold text-white tracking-tight">
+                  {kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '...'}
+>>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
                 </p>
                 <span className="text-xs font-semibold text-emerald-500 flex items-center gap-0.5">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                   </svg>
-                  +2.1% this week
+                  Live calculations
                 </span>
               </div>
             </div>
 
             <div className="flex-1 max-w-md w-full space-y-2">
               <div className="flex justify-between text-xs font-semibold">
+<<<<<<< HEAD
                 <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Target: 90%</span>
                 <span className={isDark ? 'text-indigo-400' : 'text-indigo-600'}>87.4% Reached</span>
+=======
+                <span className="text-slate-400">Target: 90%</span>
+                <span className="text-indigo-400">{kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '...'} Reached</span>
+>>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
               </div>
               <div className={`h-3 w-full rounded-full overflow-hidden p-[2px] border ${
                 isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-100 border-slate-200'
               }`}>
                 <div 
                   className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ease-out shadow-lg shadow-indigo-500/50" 
-                  style={{ width: '87.4%' }}
+                  style={{ width: kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '0%' }}
                 />
               </div>
             </div>

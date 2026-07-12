@@ -1,8 +1,19 @@
 import React, { useState } from 'react';
 
+<<<<<<< HEAD
 const SidebarLayout = ({ children, activeItem, setActiveItem, theme, setTheme }) => {
+=======
+const SidebarLayout = ({ children, activeItem, setActiveItem, user, onLogout }) => {
+>>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const userInitials = user && user.name 
+    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'OP';
+
+  const userRole = user && user.role ? user.role : 'Operator';
+  const userName = user && user.name ? user.name : 'Operator';
 
   const navigation = [
     {
@@ -43,6 +54,14 @@ const SidebarLayout = ({ children, activeItem, setActiveItem, theme, setTheme })
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      )
+    },
+    {
+      name: 'Forms',
+      icon: (
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       )
     }
@@ -179,6 +198,7 @@ const SidebarLayout = ({ children, activeItem, setActiveItem, theme, setTheme })
           })}
         </nav>
 
+<<<<<<< HEAD
         <div className={`p-4 border-t ${isDark ? 'border-slate-900' : 'border-slate-200/80'}`}>
           <div className={`flex items-center gap-3 p-2 rounded-xl transition-colors duration-200 group relative cursor-pointer ${
             isDark ? 'hover:bg-slate-900/40' : 'hover:bg-slate-100/50'
@@ -188,10 +208,22 @@ const SidebarLayout = ({ children, activeItem, setActiveItem, theme, setTheme })
                 isDark ? 'bg-slate-900 border-slate-800 text-slate-200' : 'bg-slate-100 border-slate-200 text-slate-700'
               }`}>
                 JD
+=======
+        <div className="p-4 border-t border-slate-850">
+          <div 
+            onClick={onLogout}
+            title="Click to logout"
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all duration-200 group relative cursor-pointer"
+          >
+            <div className="relative flex-shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-slate-850 flex items-center justify-center text-sm font-semibold border border-slate-700 shadow-md text-indigo-400 group-hover:text-red-400 transition-colors">
+                {userInitials}
+>>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
               </div>
               <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-transparent animate-pulse" />
             </div>
             <div className={`flex-1 min-w-0 transition-opacity duration-300 ${isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100'}`}>
+<<<<<<< HEAD
               <p className={`text-sm font-semibold truncate ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>John Doe</p>
               <p className={`text-xs truncate ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Fleet Manager</p>
             </div>
@@ -201,6 +233,15 @@ const SidebarLayout = ({ children, activeItem, setActiveItem, theme, setTheme })
               }`}>
                 <p className={`text-sm font-semibold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>John Doe</p>
                 <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>Fleet Manager</p>
+=======
+              <p className="text-sm font-semibold text-slate-200 truncate group-hover:text-red-400 transition-colors">{userName}</p>
+              <p className="text-xs text-slate-500 truncate group-hover:text-red-500/70 transition-colors">{userRole} (Sign Out)</p>
+            </div>
+            {isCollapsed && (
+              <div className="absolute left-full ml-4 p-3 bg-slate-950 border border-red-500/20 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50">
+                <p className="text-sm font-semibold text-red-400">{userName}</p>
+                <p className="text-xs text-red-500/70">Click to Logout</p>
+>>>>>>> 4c1310019f515736fb9be4aa1646c8ec6341d683
               </div>
             )}
           </div>
