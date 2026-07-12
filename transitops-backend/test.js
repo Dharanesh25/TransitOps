@@ -234,6 +234,65 @@ async function runTests() {
       throw new Error(`CSV Export failed: status ${csvReport.status}, content-type: ${csvReport.headers['content-type']}`);
     }
 
+    // 11. Test 10: POST /api/auth/register
+    console.log("\n[Test 10] POST /api/auth/register - Registering a new standard user");
+    const regRes = await request('POST', '/api/auth/register', {}, {
+      name: 'New Tester',
+      email: 'newtester@transitops.com',
+      password: 'password123'
+    });
+    if (regRes.status === 201 && regRes.body.success === true) {
+      console.log("  ✓ SUCCESS: New user registered.");
+    } else {
+      throw new Error(`Registration failed: status ${regRes.status}, body: ${JSON.stringify(regRes.body)}`);
+    }
+
+    // 12. Test 11: POST /api/auth/register (Duplicate Email)
+    console.log("\n[Test 11] POST /api/auth/register - Registering duplicate email (should fail)");
+    const dupRegRes = await request('POST', '/api/auth/register', {}, {
+      name: 'Duplicate Tester',
+      email: 'newtester@transitops.com',
+      password: 'password456'
+    });
+    if (dupRegRes.status === 400 && dupRegRes.body.error === true) {
+      console.log(`  ✓ SUCCESS: Blocked duplicate email registration with status 400. Reason: "${dupRegRes.body.message}"`);
+    } else {
+      throw new Error(`Duplicate registration did not fail as expected! Status: ${dupRegRes.status}, Body: ${JSON.stringify(dupRegRes.body)}`);
+    }
+
+    // 13. Test 12: POST /api/auth/login (Flat response format check)
+    console.log("\n[Test 12] POST /api/auth/login - Checking flat JSON credentials response");
+    const newLoginRes = await request('POST', '/api/auth/login', {}, {
+      email: 'newtester@transitops.com',
+      password: 'password123'
+    });
+    if (newLoginRes.status === 200 && newLoginRes.body.token && newLoginRes.body.id && newLoginRes.body.name === 'New Tester') {
+      console.log("  ✓ SUCCESS: Login returned flat JWT body containing token, id, name, and email.");
+    } else {
+      throw new Error(`Login flat response failed: status ${newLoginRes.status}, body: ${JSON.stringify(newLoginRes.body)}`);
+    }
+
+    const newTesterToken = newLoginRes.body.token;
+    const newTesterHeader = { 'Authorization': `Bearer ${newTesterToken}` };
+
+    // 14. Test 13: GET /api/profile (Protected profile access & blocking checks)
+    console.log("\n[Test 13] GET /api/profile - Accessing authenticated user profile info");
+    const profileRes = await request('GET', '/api/profile', newTesterHeader);
+    if (profileRes.status === 200 && profileRes.body.name === 'New Tester' && profileRes.body.created_at) {
+      console.log(`  ✓ SUCCESS: Profile retrieved. ID: ${profileRes.body.id}, Name: ${profileRes.body.name}, Created: ${profileRes.body.created_at}`);
+    } else {
+      throw new Error(`Profile retrieval failed: status ${profileRes.status}, body: ${JSON.stringify(profileRes.body)}`);
+    }
+
+    // Test access blocking
+    console.log("\n[Test 14] GET /api/profile - Accessing profile without auth token (should fail)");
+    const blockedProfileRes = await request('GET', '/api/profile', {});
+    if (blockedProfileRes.status === 401 && blockedProfileRes.body.error === true) {
+      console.log(`  ✓ SUCCESS: Blocked unauthorized profile request with status 401. Message: "${blockedProfileRes.body.message}"`);
+    } else {
+      throw new Error(`Access was not blocked! Status: ${blockedProfileRes.status}, Body: ${JSON.stringify(blockedProfileRes.body)}`);
+    }
+
     console.log("\n=================== ALL TESTS COMPLETED SUCCESSFULLY! ===================");
     process.exit(0);
 

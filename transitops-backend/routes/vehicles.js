@@ -28,7 +28,49 @@ router.get('/', verifyToken, (req, res) => {
 
   try {
     const vehicles = db.prepare(sql).all(...params);
-    return res.json(vehicles);
+
+    const enhancedVehicles = vehicles.map(v => {
+      // Fuel efficiency: completed trips planned distance / fuel logs liters
+      const tripsStats = db.prepare("SELECT SUM(planned_distance) as total_distance FROM trips WHERE vehicle_id = ? AND status = 'Completed'").get(v.id);
+      const fuelStats = db.prepare("SELECT SUM(liters) as total_liters, SUM(cost) as total_cost FROM fuel_logs WHERE vehicle_id = ?").get(v.id);
+
+      const totalDistance = tripsStats.total_distance || 0;
+      const totalFuelLiters = fuelStats.total_liters || 0;
+      const totalFuelCost = fuelStats.total_cost || 0;
+
+      const fuelEfficiency = totalFuelLiters > 0 ? (totalDistance / totalFuelLiters) : 0;
+
+      // Operational Cost: SUM fuel + SUM maintenance + SUM expenses
+      const maintenanceStats = db.prepare("SELECT SUM(cost) as total_maintenance FROM maintenance WHERE vehicle_id = ?").get(v.id);
+      const expensesStats = db.prepare("SELECT SUM(amount) as total_expenses FROM expenses WHERE vehicle_id = ?").get(v.id);
+
+      const totalMaintenanceCost = maintenanceStats.total_maintenance || 0;
+      const totalExpenses = expensesStats.total_expenses || 0;
+
+      const totalOperationalCost = totalFuelCost + totalMaintenanceCost + totalExpenses;
+
+      // ROI = (revenue - operational_cost) / acquisition_cost
+      const revenue = totalDistance * 3.0;
+      const acquisitionCost = v.acquisition_cost || 1;
+      const roi = acquisitionCost > 0 ? ((revenue - totalOperationalCost) / acquisitionCost) * 100 : 0;
+
+      return {
+        id: Number(v.id),
+        reg_number: v.reg_number,
+        name: v.name,
+        type: v.type,
+        max_load: Number(v.max_load),
+        odometer: Number(v.odometer),
+        acquisition_cost: Number(v.acquisition_cost),
+        status: v.status,
+        region: v.region,
+        efficiency: fuelEfficiency > 0 ? `${fuelEfficiency.toFixed(1)} km/L` : 'N/A',
+        cost: totalOperationalCost,
+        roi: Number(roi.toFixed(1))
+      };
+    });
+
+    return res.json(enhancedVehicles);
   } catch (err) {
     return res.status(500).json({ error: true, message: err.message });
   }

@@ -1,22 +1,6 @@
 import React, { useState } from 'react';
 
-const vehicles = [
-  { id: 'v1', name: 'Volvo FH16', capacity: 20000 },
-  { id: 'v2', name: 'Scania R500', capacity: 18000 },
-  { id: 'v3', name: 'Ford E-Transit', capacity: 1500 },
-  { id: 'v4', name: 'Rivian EDV', capacity: 2500 },
-  { id: 'v5', name: 'Mercedes Sprinter', capacity: 3000 }
-];
-
-const drivers = [
-  { id: 'd1', name: 'Michael Cole' },
-  { id: 'd2', name: 'Sarah Jenkins' },
-  { id: 'd3', name: 'David Smith' },
-  { id: 'd4', name: 'Carlos Diaz' },
-  { id: 'd5', name: 'Emma Wilson' }
-];
-
-const TripDispatchForm = ({ onDispatch }) => {
+const TripDispatchForm = ({ vehicles = [], drivers = [], onDispatch }) => {
   const [formData, setFormData] = useState({
     source: '',
     destination: '',
@@ -34,25 +18,30 @@ const TripDispatchForm = ({ onDispatch }) => {
     }));
   };
 
-  const selectedVehicle = vehicles.find((v) => v.id === formData.vehicleId);
-  const selectedCapacity = selectedVehicle ? selectedVehicle.capacity : 0;
+  // Filter for available assets
+  const availableVehicles = vehicles.filter(v => v.status === 'Available');
+  const availableDrivers = drivers.filter(d => d.status === 'Available');
+
+  const selectedVehicle = vehicles.find((v) => String(v.id) === String(formData.vehicleId));
+  const selectedCapacity = selectedVehicle ? selectedVehicle.max_load : 0;
   const isOverCapacity = formData.vehicleId && formData.cargoWeight && Number(formData.cargoWeight) > selectedCapacity;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isOverCapacity) return;
 
-    const selectedDriver = drivers.find((d) => d.id === formData.driverId);
+    const selectedDriver = drivers.find((d) => String(d.id) === String(formData.driverId));
     
     if (onDispatch) {
       onDispatch({
-        id: `TRIP-${Math.floor(1000 + Math.random() * 9000)}`,
-        route: `${formData.source} to ${formData.destination}`,
-        progress: 0,
-        driver: selectedDriver ? selectedDriver.name : '',
-        vehicle: selectedVehicle ? selectedVehicle.name : '',
-        status: 'Scheduled',
-        eta: 'Pending Departure'
+        source: formData.source,
+        destination: formData.destination,
+        cargo_weight: Number(formData.cargoWeight),
+        planned_distance: Number(formData.plannedDistance),
+        vehicle_id: Number(formData.vehicleId),
+        driver_id: Number(formData.driverId),
+        driverName: selectedDriver ? selectedDriver.name : '',
+        vehicleName: selectedVehicle ? selectedVehicle.name : ''
       });
     }
 
@@ -151,9 +140,9 @@ const TripDispatchForm = ({ onDispatch }) => {
               className="w-full bg-slate-900/50 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 px-3.5 transition-all outline-none appearance-none"
             >
               <option value="" disabled className="bg-slate-950">Choose a vehicle</option>
-              {vehicles.map((v) => (
+              {availableVehicles.map((v) => (
                 <option key={v.id} value={v.id} className="bg-slate-950">
-                  {v.name} (Max: {v.capacity.toLocaleString()} kg)
+                  {v.name} (Max: {v.max_load.toLocaleString()} kg)
                 </option>
               ))}
             </select>
@@ -170,7 +159,7 @@ const TripDispatchForm = ({ onDispatch }) => {
               className="w-full bg-slate-900/50 border border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-white rounded-xl py-2.5 px-3.5 transition-all outline-none appearance-none"
             >
               <option value="" disabled className="bg-slate-950">Choose a driver</option>
-              {drivers.map((d) => (
+              {availableDrivers.map((d) => (
                 <option key={d.id} value={d.id} className="bg-slate-950">
                   {d.name}
                 </option>

@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 
-const vehicles = [
-  { id: 'v1', name: 'Volvo FH16' },
-  { id: 'v2', name: 'Scania R500' },
-  { id: 'v3', name: 'Ford E-Transit' },
-  { id: 'v4', name: 'Rivian EDV' },
-  { id: 'v5', name: 'Mercedes Sprinter' }
-];
-
-const LogsAndExpenses = ({ onAddExpense }) => {
+const LogsAndExpenses = ({ vehicles = [], onAddExpense }) => {
   const [fuelForm, setFuelForm] = useState({
     vehicle: '',
     liters: '',
@@ -43,16 +35,11 @@ const LogsAndExpenses = ({ onAddExpense }) => {
     e.preventDefault();
     if (onAddExpense) {
       onAddExpense({
-        id: `EXP-${Math.floor(1000 + Math.random() * 9000)}`,
-        category: 'Fuel/Charging',
-        vehicle: fuelForm.vehicle,
-        date: new Date(fuelForm.date).toLocaleDateString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric'
-        }),
-        amount: Number(fuelForm.cost),
-        status: 'Paid'
+        logType: 'fuel',
+        vehicle_id: Number(fuelForm.vehicle),
+        liters: Number(fuelForm.liters),
+        cost: Number(fuelForm.cost),
+        date: fuelForm.date
       });
     }
     setFuelForm({
@@ -67,16 +54,11 @@ const LogsAndExpenses = ({ onAddExpense }) => {
     e.preventDefault();
     if (onAddExpense) {
       onAddExpense({
-        id: `EXP-${Math.floor(1000 + Math.random() * 9000)}`,
-        category: `Maintenance (${maintenanceForm.serviceType})`,
-        vehicle: maintenanceForm.vehicle,
-        date: new Date().toLocaleDateString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric'
-        }),
-        amount: Number(maintenanceForm.cost),
-        status: maintenanceForm.status === 'Active' ? 'Pending' : 'Paid'
+        logType: 'maintenance',
+        vehicle_id: Number(maintenanceForm.vehicle),
+        type: maintenanceForm.serviceType,
+        cost: Number(maintenanceForm.cost),
+        status: maintenanceForm.status === 'Active' ? 'Open' : 'Closed'
       });
     }
     setMaintenanceForm({
@@ -115,7 +97,7 @@ const LogsAndExpenses = ({ onAddExpense }) => {
               >
                 <option value="" disabled className="bg-slate-950">Select Vehicle</option>
                 {vehicles.map((v) => (
-                  <option key={v.id} value={v.name} className="bg-slate-950">{v.name}</option>
+                  <option key={v.id} value={v.id} className="bg-slate-950">{v.name}</option>
                 ))}
               </select>
             </div>
@@ -208,7 +190,7 @@ const LogsAndExpenses = ({ onAddExpense }) => {
               >
                 <option value="" disabled className="bg-slate-950">Select Vehicle</option>
                 {vehicles.map((v) => (
-                  <option key={v.id} value={v.name} className="bg-slate-950">{v.name}</option>
+                  <option key={v.id} value={v.id} className="bg-slate-950">{v.name}</option>
                 ))}
               </select>
             </div>

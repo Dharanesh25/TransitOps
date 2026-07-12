@@ -11,6 +11,7 @@ const maintenanceRoutes = require('./routes/maintenance');
 const fuelRoutes = require('./routes/fuel');
 const expenseRoutes = require('./routes/expenses');
 const reportRoutes = require('./routes/reports');
+const profileRoutes = require('./routes/profile');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -33,6 +34,7 @@ app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/fuel-logs', fuelRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/profile', profileRoutes);
 
 // Global Error Handler formatting: { error: true, message: "..." }
 app.use((err, req, res, next) => {

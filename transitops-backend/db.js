@@ -28,8 +28,10 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    role TEXT CHECK(role IN ('Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst')) NOT NULL
+    password_hash TEXT,
+    role TEXT CHECK(role IN ('Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst')),
+    password TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 
   CREATE TABLE IF NOT EXISTS vehicles (
@@ -101,6 +103,10 @@ db.exec(`
     date TEXT NOT NULL DEFAULT (date('now', 'localtime')),
     FOREIGN KEY(vehicle_id) REFERENCES vehicles(id) ON DELETE CASCADE
   );
+
+  CREATE INDEX IF NOT EXISTS idx_vehicles_status ON vehicles(status);
+  CREATE INDEX IF NOT EXISTS idx_drivers_status ON drivers(status);
+  CREATE INDEX IF NOT EXISTS idx_trips_status ON trips(status);
 `);
 
 module.exports = db;

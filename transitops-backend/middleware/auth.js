@@ -1,5 +1,10 @@
 const jwt = require('jsonwebtoken');
 
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error("FATAL: JWT_SECRET environment variable is missing!");
+}
+
 /**
  * Middleware to verify JWT token.
  * Looks for 'Authorization: Bearer <token>' header.
@@ -16,8 +21,7 @@ function verifyToken(req, res, next) {
   }
 
   try {
-    const secret = process.env.JWT_SECRET || 'fb8b94cc218d6f9a0ddb94514ba19dfd56d953cae9cb2b11568285ea9a43a2bc';
-    const decoded = jwt.verify(token, secret);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; // Attaches { id, role, email }
     next();
   } catch (err) {

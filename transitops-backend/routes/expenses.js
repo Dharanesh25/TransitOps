@@ -4,6 +4,24 @@ const db = require('../db');
 const { verifyToken } = require('../middleware/auth');
 
 /**
+ * GET /api/expenses
+ * Fetches all expenses joined with vehicle details.
+ */
+router.get('/', verifyToken, (req, res) => {
+  try {
+    const expenses = db.prepare(`
+      SELECT e.*, v.name as vehicle_name 
+      FROM expenses e
+      JOIN vehicles v ON e.vehicle_id = v.id
+      ORDER BY e.date DESC, e.id DESC
+    `).all();
+    return res.json(expenses);
+  } catch (err) {
+    return res.status(500).json({ error: true, message: err.message });
+  }
+});
+
+/**
  * POST /api/expenses
  * Logs an operational expense for a vehicle.
  */

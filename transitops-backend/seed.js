@@ -13,6 +13,22 @@ try {
   db.prepare("DELETE FROM vehicles").run();
   db.prepare("DELETE FROM users").run();
   try {
+    db.exec("DROP TABLE IF EXISTS users;");
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT,
+        role TEXT CHECK(role IN ('Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst')),
+        password TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+  } catch (e) {
+    console.error("Error recreating users table:", e);
+  }
+  try {
     db.prepare("DELETE FROM sqlite_sequence").run();
   } catch (e) {
     // Ignore error if sqlite_sequence doesn't exist yet
@@ -22,14 +38,14 @@ try {
   // 1. Seed Users (one for each role, password: password123)
   const roles = ['Fleet Manager', 'Driver', 'Safety Officer', 'Financial Analyst'];
   const userStmt = db.prepare(`
-    INSERT INTO users (name, email, password_hash, role)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO users (name, email, password_hash, role, password)
+    VALUES (?, ?, ?, ?, ?)
   `);
 
   roles.forEach(role => {
     const email = `${role.toLowerCase().replace(/\s+/g, '')}@transitops.com`;
     const passwordHash = bcrypt.hashSync('password123', 10);
-    userStmt.run(role, email, passwordHash, role);
+    userStmt.run(role, email, passwordHash, role, passwordHash);
     console.log(`[TransitOps Seed] Seeded User: ${role} (${email})`);
   });
 

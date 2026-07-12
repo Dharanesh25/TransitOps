@@ -1,10 +1,10 @@
 import React from 'react';
 
-const KPIMetricsGrid = () => {
+const KPIMetricsGrid = ({ kpis = {} }) => {
   const metrics = [
     {
       title: 'Active Vehicles',
-      value: '142',
+      value: kpis.activeVehicles !== undefined ? String(kpis.activeVehicles) : '...',
       change: '+4 vs yesterday',
       isPositive: true,
       color: 'from-blue-500/20 to-indigo-500/5',
@@ -20,7 +20,7 @@ const KPIMetricsGrid = () => {
     },
     {
       title: 'Available Vehicles',
-      value: '28',
+      value: kpis.availableVehicles !== undefined ? String(kpis.availableVehicles) : '...',
       change: 'Fully prepped',
       isPositive: true,
       color: 'from-emerald-500/20 to-teal-500/5',
@@ -35,7 +35,7 @@ const KPIMetricsGrid = () => {
     },
     {
       title: 'Vehicles in Maintenance',
-      value: '12',
+      value: kpis.vehiclesInMaintenance !== undefined ? String(kpis.vehiclesInMaintenance) : '...',
       change: '3 scheduled today',
       isPositive: false,
       color: 'from-amber-500/20 to-orange-500/5',
@@ -51,7 +51,7 @@ const KPIMetricsGrid = () => {
     },
     {
       title: 'Active Trips',
-      value: '84',
+      value: kpis.activeTrips !== undefined ? String(kpis.activeTrips) : '...',
       change: '+12% from last hour',
       isPositive: true,
       color: 'from-blue-500/20 to-sky-500/5',
@@ -66,7 +66,7 @@ const KPIMetricsGrid = () => {
     },
     {
       title: 'Pending Trips',
-      value: '19',
+      value: kpis.pendingTrips !== undefined ? String(kpis.pendingTrips) : '...',
       change: 'Awaiting dispatch',
       isPositive: false,
       color: 'from-violet-500/20 to-purple-500/5',
@@ -81,7 +81,7 @@ const KPIMetricsGrid = () => {
     },
     {
       title: 'Drivers On Duty',
-      value: '96',
+      value: kpis.driversOnDuty !== undefined ? String(kpis.driversOnDuty) : '...',
       change: '8 standby drivers',
       isPositive: true,
       color: 'from-indigo-500/20 to-purple-500/5',
@@ -138,13 +138,13 @@ const KPIMetricsGrid = () => {
               </span>
               <div className="flex items-baseline gap-2">
                 <p className="text-4xl font-extrabold text-white tracking-tight">
-                  87.4%
+                  {kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '...'}
                 </p>
                 <span className="text-xs font-semibold text-emerald-400 flex items-center gap-0.5">
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                   </svg>
-                  +2.1% this week
+                  Live calculations
                 </span>
               </div>
             </div>
@@ -152,12 +152,12 @@ const KPIMetricsGrid = () => {
             <div className="flex-1 max-w-md w-full space-y-2">
               <div className="flex justify-between text-xs font-semibold">
                 <span className="text-slate-400">Target: 90%</span>
-                <span className="text-indigo-400">87.4% Reached</span>
+                <span className="text-indigo-400">{kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '...'} Reached</span>
               </div>
               <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 p-[2px]">
                 <div 
                   className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500 ease-out shadow-lg shadow-indigo-500/50" 
-                  style={{ width: '87.4%' }}
+                  style={{ width: kpis.fleetUtilization !== undefined ? `${kpis.fleetUtilization}%` : '0%' }}
                 />
               </div>
             </div>

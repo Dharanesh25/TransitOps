@@ -1,52 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const initialVehicles = [
-  { id: 1, name: 'Volvo FH16 Heavy', type: 'Truck', status: 'Active', region: 'North', efficiency: '8.2 MPG', cost: 1450, roi: 240 },
-  { id: 2, name: 'Ford E-Transit EV', type: 'EV', status: 'Active', region: 'West', efficiency: '102 MPGe', cost: 350, roi: 380 },
-  { id: 3, name: 'Mercedes Sprinter', type: 'Van', status: 'Maintenance', region: 'South', efficiency: '18.4 MPG', cost: 950, roi: 110 },
-  { id: 4, name: 'Scania R500 Heavy', type: 'Truck', status: 'Active', region: 'East', efficiency: '7.9 MPG', cost: 1600, roi: 215 },
-  { id: 5, name: 'Rivian EDV 700', type: 'EV', status: 'Idle', region: 'West', efficiency: '96 MPGe', cost: 400, roi: 190 },
-  { id: 6, name: 'Ram ProMaster', type: 'Van', status: 'Active', region: 'North', efficiency: '16.1 MPG', cost: 880, roi: 145 },
-  { id: 7, name: 'Peterbilt 579', type: 'Truck', status: 'Maintenance', region: 'South', efficiency: '6.8 MPG', cost: 1850, roi: 85 },
-  { id: 8, name: 'Chevrolet Express', type: 'Van', status: 'Idle', region: 'East', efficiency: '14.2 MPG', cost: 1100, roi: 95 }
-];
+const displayStatus = (status) => {
+  if (status === 'Available' || status === 'On Trip') return 'Active';
+  if (status === 'In Shop') return 'Maintenance';
+  return 'Idle';
+};
 
-const AnalyticsTable = () => {
+const AnalyticsTable = ({ token }) => {
+  const [vehicles, setVehicles] = useState([]);
   const [typeFilter, setTypeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [regionFilter, setRegionFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const filteredVehicles = initialVehicles.filter((vehicle) => {
-    const matchesType = typeFilter === 'All' || vehicle.type === typeFilter;
-    const matchesStatus = statusFilter === 'All' || vehicle.status === statusFilter;
-    const matchesRegion = regionFilter === 'All' || vehicle.region === regionFilter;
-    const matchesSearch = vehicle.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesType && matchesStatus && matchesRegion && matchesSearch;
+  const fetchVehicles = async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      let url = 'http://localhost:4000/api/vehicles';
+      const queryParams = [];
+      if (typeFilter !== 'All') queryParams.push(`type=${typeFilter}`);
+      if (statusFilter !== 'All') {
+        const backendStatus = statusFilter === 'Active' ? 'Available' : (statusFilter === 'Maintenance' ? 'In Shop' : 'Retired');
+        queryParams.push(`status=${backendStatus}`);
+      }
+      if (regionFilter !== 'All') queryParams.push(`region=${regionFilter}`);
+      if (queryParams.length > 0) {
+        url += '?' + queryParams.join('&');
+      }
+
+      const res = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setVehicles(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch vehicles:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVehicles();
+  }, [typeFilter, statusFilter, regionFilter, token]);
+
+  const filteredVehicles = vehicles.filter((vehicle) => {
+    return vehicle.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  const handleExportCSV = () => {
-    const headers = ['Vehicle Name', 'Type', 'Status', 'Region', 'Fuel Efficiency', 'Operational Cost ($)', 'ROI (%)'];
-    const rows = filteredVehicles.map(v => [
-      v.name,
-      v.type,
-      v.status,
-      v.region,
-      v.efficiency,
-      v.cost,
-      v.roi
-    ]);
-
-    const csvContent = 'data:text/csv;charset=utf-8,' 
-      + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `TransitOps_Fleet_Report_${new Date().toISOString().slice(0,10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleExportCSV = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch('http://localhost:4000/api/reports/export/csv?type=vehicles', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `TransitOps_Fleet_Report_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("CSV Export failed:", err);
+    }
   };
 
   return (
@@ -143,16 +165,16 @@ const AnalyticsTable = () => {
                   </td>
                   <td className="py-4.5 px-6 text-center">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full ${
-                      vehicle.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' :
-                      vehicle.status === 'Maintenance' ? 'bg-amber-500/10 text-amber-400' :
+                      displayStatus(vehicle.status) === 'Active' ? 'bg-emerald-500/10 text-emerald-400' :
+                      displayStatus(vehicle.status) === 'Maintenance' ? 'bg-amber-500/10 text-amber-400' :
                       'bg-slate-800 text-slate-400'
                     }`}>
                       <span className={`w-1 h-1 rounded-full ${
-                        vehicle.status === 'Active' ? 'bg-emerald-500' :
-                        vehicle.status === 'Maintenance' ? 'bg-amber-500' :
+                        displayStatus(vehicle.status) === 'Active' ? 'bg-emerald-500' :
+                        displayStatus(vehicle.status) === 'Maintenance' ? 'bg-amber-500' :
                         'bg-slate-400'
                       }`} />
-                      {vehicle.status}
+                      {displayStatus(vehicle.status)}
                     </span>
                   </td>
                   <td className="py-4.5 px-6 text-center font-medium text-slate-400">

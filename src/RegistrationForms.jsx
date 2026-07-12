@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const RegistrationForms = () => {
+const RegistrationForms = ({ token, onSuccess }) => {
   const [activeForm, setActiveForm] = useState('vehicle');
   const [formData, setFormData] = useState({
     registrationNumber: '',
@@ -28,29 +28,90 @@ const RegistrationForms = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmittedData({
-      formType: activeForm,
-      timestamp: new Date().toLocaleTimeString(),
-      data: activeForm === 'vehicle' ? {
-        registrationNumber: formData.registrationNumber,
-        model: formData.model,
-        type: formData.type,
-        maxLoadCapacity: formData.maxLoadCapacity,
-        currentOdometer: formData.currentOdometer,
-        acquisitionCost: formData.acquisitionCost,
-        vehicleStatus: formData.vehicleStatus
-      } : {
-        fullName: formData.fullName,
-        licenseNumber: formData.licenseNumber,
-        licenseCategory: formData.licenseCategory,
-        licenseExpiryDate: formData.licenseExpiryDate,
-        contactNumber: formData.contactNumber,
-        safetyScore: formData.safetyScore,
-        driverStatus: formData.driverStatus
+    if (!token) return;
+
+    try {
+      if (activeForm === 'vehicle') {
+        const statusMap = {
+          'Active': 'Available',
+          'Maintenance': 'In Shop',
+          'Out of Service': 'Retired'
+        };
+        const backendStatus = statusMap[formData.vehicleStatus] || 'Available';
+
+        const res = await fetch('http://localhost:4000/api/vehicles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            reg_number: formData.registrationNumber,
+            name: formData.model,
+            type: formData.type,
+            max_load: Number(formData.maxLoadCapacity),
+            odometer: Number(formData.currentOdometer),
+            acquisition_cost: Number(formData.acquisitionCost),
+            status: backendStatus,
+            region: 'North'
+          })
+        });
+
+        const data = await res.json();
+        if (res.status === 201) {
+          setSubmittedData({
+            formType: 'vehicle',
+            timestamp: new Date().toLocaleTimeString(),
+            data
+          });
+          if (onSuccess) onSuccess();
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      } else {
+        const statusMap = {
+          'Active': 'Available',
+          'On Break': 'Off Duty',
+          'Off Duty': 'Off Duty',
+          'Suspended': 'Suspended'
+        };
+        const backendStatus = statusMap[formData.driverStatus] || 'Available';
+
+        const res = await fetch('http://localhost:4000/api/drivers', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: formData.fullName,
+            license_number: formData.licenseNumber,
+            license_category: formData.licenseCategory,
+            license_expiry: formData.licenseExpiryDate,
+            contact_number: formData.contactNumber,
+            safety_score: Number(formData.safetyScore),
+            status: backendStatus
+          })
+        });
+
+        const data = await res.json();
+        if (res.status === 201) {
+          setSubmittedData({
+            formType: 'driver',
+            timestamp: new Date().toLocaleTimeString(),
+            data
+          });
+          if (onSuccess) onSuccess();
+        } else {
+          alert(`Error: ${data.message}`);
+        }
       }
-    });
+    } catch (err) {
+      console.error(err);
+      alert(`Network error: ${err.message}`);
+    }
   };
 
   const handleReset = () => {

@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 
-const SidebarLayout = ({ children, activeItem, setActiveItem }) => {
+const SidebarLayout = ({ children, activeItem, setActiveItem, user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const userInitials = user && user.name 
+    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'OP';
+
+  const userRole = user && user.role ? user.role : 'Operator';
+  const userName = user && user.name ? user.name : 'Operator';
 
   const navigation = [
     {
@@ -133,21 +140,25 @@ const SidebarLayout = ({ children, activeItem, setActiveItem }) => {
         </nav>
 
         <div className="p-4 border-t border-slate-850">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-900/40 transition-colors duration-200 group relative cursor-pointer">
+          <div 
+            onClick={onLogout}
+            title="Click to logout"
+            className="flex items-center gap-3 p-2 rounded-xl hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all duration-200 group relative cursor-pointer"
+          >
             <div className="relative flex-shrink-0">
-              <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-sm font-semibold border border-slate-700 shadow-md">
-                JD
+              <div className="w-10 h-10 rounded-xl bg-slate-850 flex items-center justify-center text-sm font-semibold border border-slate-700 shadow-md text-indigo-400 group-hover:text-red-400 transition-colors">
+                {userInitials}
               </div>
               <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-slate-950 animate-pulse" />
             </div>
             <div className={`flex-1 min-w-0 transition-opacity duration-300 ${isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100'}`}>
-              <p className="text-sm font-semibold text-slate-200 truncate">John Doe</p>
-              <p className="text-xs text-slate-500 truncate">Fleet Manager</p>
+              <p className="text-sm font-semibold text-slate-200 truncate group-hover:text-red-400 transition-colors">{userName}</p>
+              <p className="text-xs text-slate-500 truncate group-hover:text-red-500/70 transition-colors">{userRole} (Sign Out)</p>
             </div>
             {isCollapsed && (
-              <div className="absolute left-full ml-4 p-3 bg-slate-950 border border-slate-800 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50">
-                <p className="text-sm font-semibold text-slate-200">John Doe</p>
-                <p className="text-xs text-slate-500">Fleet Manager</p>
+              <div className="absolute left-full ml-4 p-3 bg-slate-950 border border-red-500/20 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl whitespace-nowrap z-50">
+                <p className="text-sm font-semibold text-red-400">{userName}</p>
+                <p className="text-xs text-red-500/70">Click to Logout</p>
               </div>
             )}
           </div>

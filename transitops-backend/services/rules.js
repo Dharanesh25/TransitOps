@@ -29,10 +29,8 @@ function canDispatch(vehicle, driver, cargoWeight) {
   }
 
   // License expiry checks: license_expiry in the future
-  const expiryDate = new Date(driver.license_expiry);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Reset time to compare dates only
-  if (expiryDate < today) {
+  const todayStr = new Date().toISOString().split('T')[0];
+  if (driver.license_expiry < todayStr) {
     return { ok: false, reason: `Driver's license has expired (Expiry: ${driver.license_expiry})` };
   }
 
